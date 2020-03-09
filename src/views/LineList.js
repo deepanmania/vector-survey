@@ -13,6 +13,8 @@ import CardHeader from "components/Card/CardHeader.js";
 import CardBody from "components/Card/CardBody.js";
 import Table from "components/Table/Table.js";
 import moment from "moment";
+import FileSaver from "file-saver";
+import { parse } from "json2csv";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker
@@ -38,7 +40,13 @@ const keyMapper = {
   houseIndex: "Computed Indices – House Index",
   containers: "Number of Container Inspected",
   containerIndex: "Computed Indices - Container Index",
-  breteauIndex: "Computed Indices - Breteau Index"
+  breteauIndex: "Computed Indices - Breteau Index",
+  placeType: "Place Type",
+  hud: "HUD",
+  village: "Village",
+  habitation: "Habitation",
+  district: "District",
+  block: "Block"
 };
 
 const formStyles = {
@@ -84,7 +92,7 @@ export default function LineList(props) {
   const [dateOfInspection, setDateOfInspection] = React.useState(new Date());
   const [hud, setHud] = React.useState(0);
   const [placeType, setPlaceType] = React.useState("");
-
+  const [recordType, setRecordType] = React.useState("");
   const [block, setBlock] = React.useState(0);
 
   const [village, setVillage] = React.useState(0);
@@ -104,9 +112,12 @@ export default function LineList(props) {
   };
 
   const handleClick = id => {
-    Http.getVectorEntry(id).then(res => {
+    Http.getEntry(id, localStorage.getItem("appName"), recordType).then(res => {
       props.history.push({
-        pathname: "/fillform",
+        pathname:
+          localStorage.getItem("appName") === "vector"
+            ? "/fillform"
+            : "/waterform",
         state: res
       });
     });
@@ -114,16 +125,21 @@ export default function LineList(props) {
 
   const handleSubmit = () => {
     const payload = {
-      district,
-      hud,
-      block,
-      village,
-      habitation,
-      placeType,
-      dateOfInspection
+      type: recordType,
+      body: {
+        district,
+        hud,
+        block,
+        village,
+        // habitation,
+        placeType,
+        dateOfInspection
+      }
     };
-    Http.applyFilter(payload).then(resp => {
+    console.log(localStorage.getItem("appName"));
+    Http.applyFilter(payload, localStorage.getItem("appName")).then(resp => {
       resp = resp.map(i => {
+        delete i.defaultImage;
         i.dateOfInspection = moment(i.dateOfInspection, moment.ISO_8601).format(
           "DD/MM/YYYY"
         );
@@ -131,6 +147,12 @@ export default function LineList(props) {
       });
       setData(resp);
     });
+  };
+
+  const downloadCSV = () => {
+    const csv = parse(data);
+    const blob = new Blob([csv], { type: "text/plain;charset=utf-8" });
+    FileSaver.saveAs(blob, "vector-linelist.csv");
   };
 
   const handleChange = (fn, event) => {
@@ -181,21 +203,28 @@ export default function LineList(props) {
         if (fn === "street") {
           setStreet(targetVal);
         }
-        if (fn === "placetype") {
-          setPlaceType(targetVal);
-        }
       });
+    } else {
+      if (fn === "placetype") {
+        setPlaceType(targetVal);
+      }
+      if (fn === "recordType") {
+        console.log(targetVal);
+        setRecordType(targetVal);
+      }
     }
   };
   const handleDateChange = date => {
     setDateOfInspection(date);
   };
   useEffect(() => {
+    // setting tamilnadu as default and requesting districts
     Http.getResponse("districts", 33).then(res => {
       setDistricts(res);
-      Http.getLineListData().then(resp => {
+      Http.getLineListData(localStorage.getItem("appName")).then(resp => {
         console.log("!!!!", resp);
         resp = resp.map(i => {
+          delete i.defaultImage;
           i.dateOfInspection = moment(
             i.dateOfInspection,
             moment.ISO_8601
@@ -317,7 +346,7 @@ export default function LineList(props) {
                     </FormHelperText>
                   </FormControl>
                 </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
+                {/* <GridItem xs={12} sm={12} md={4}>
                   <FormControl className={classes.formControl}>
                     <InputLabel id="demo-simple-select-helper-label">
                       Habitations
@@ -362,7 +391,7 @@ export default function LineList(props) {
                     </Select>
                     <FormHelperText>Name of the Hamlet / Street</FormHelperText>
                   </FormControl>
-                </GridItem>
+                </GridItem> */}
               </GridContainer>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={4}>
@@ -379,13 +408,25 @@ export default function LineList(props) {
                       <MenuItem value="">
                         <em>None</em>
                       </MenuItem>
-                      {[
-                        "House",
-                        "Institutions",
-                        "Govt Building",
-                        "Open Place",
-                        "Others"
-                      ].map((i, idx) => (
+                      {(localStorage.getItem("appName") === "vector"
+                        ? [
+                            "House",
+                            "Institutions",
+                            "Govt Building",
+                            "Open Place",
+                            "Others"
+                          ]
+                        : [
+                            "Corporation",
+                            "Municipalities",
+                            "Town Panchayats",
+                            "Government Hospitals",
+                            "Government Homes",
+                            "Railway Stations",
+                            "Prisons",
+                            "Government Institutions"
+                          ]
+                      ).map((i, idx) => (
                         <MenuItem value={i} key={idx}>
                           {i}
                         </MenuItem>
@@ -410,19 +451,66 @@ export default function LineList(props) {
                     />
                   </MuiPickersUtilsProvider>
                 </GridItem>
+                <GridItem xs={12} sm={12} md={4}>
+                  <FormControl className={classes.formControl}>
+                    <InputLabel id="demo-simple-select-helper-label">
+                      Type of Record
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-helper-label"
+                      id="recordType"
+                      value={recordType}
+                      onChange={handleChange.bind(null, "recordType")}
+                    >
+                      <MenuItem value="survey" key={1}>
+                        Survey Data
+                      </MenuItem>
+                      <MenuItem value="action" key={2}>
+                        Action Taken
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </GridItem>
               </GridContainer>
             </CardBody>
           </Card>
         </GridItem>
       </GridContainer>
-      <Button color="primary" onClick={handleSubmit}>
+      <Button
+        color="primary"
+        onClick={handleSubmit}
+        style={{
+          marginLeft: "50%"
+        }}
+      >
         Apply
       </Button>
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
           <Card>
             <CardHeader color="warning">
-              <h4 className={listClasses.cardTitleWhite}>Line List</h4>
+              <div
+                style={{
+                  float: "left"
+                }}
+              >
+                <h4 className={listClasses.cardTitleWhite}>Line List</h4>
+              </div>
+              <div
+                onClick={downloadCSV}
+                style={{
+                  float: "right"
+                }}
+              >
+                Export Result &nbsp;
+                <Icon
+                  style={{
+                    marginBottom: "-5%"
+                  }}
+                >
+                  cloud_download
+                </Icon>
+              </div>
             </CardHeader>
             <CardBody>
               {data.length && (
@@ -431,7 +519,7 @@ export default function LineList(props) {
                   tableHead={[
                     "S.No",
                     ...Object.keys(data[0]).filter(i => i !== "id"),
-                    ...["", ""]
+                    ...[""]
                   ].map(i => keyMapper[i])}
                   tableData={data.map((i, idx) => {
                     const id = i.id;

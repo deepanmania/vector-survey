@@ -178,16 +178,28 @@ export default function Header(props) {
       title: "Home",
       icon: ""
     },
-    {
-      route: "/dashboard",
-      title: "Dashboard",
-      icon: ""
-    },
-    {
-      route: "/fillform",
-      title: "Fill Form",
-      icon: ""
-    },
+    ...(localStorage.getItem("appName") !== "water-lab"
+      ? [
+          {
+            route: "/dashboard",
+            title: "Dashboard",
+            icon: ""
+          },
+          {
+            route:
+              localStorage.getItem("appName") === "vector"
+                ? "/fillform"
+                : "/waterform",
+            title: "Vector Survey",
+            icon: ""
+          },
+          {
+            route: "/vector-action",
+            title: "Action Taken",
+            icon: ""
+          }
+        ]
+      : []),
     {
       route: "linelist",
       title: "Line List",

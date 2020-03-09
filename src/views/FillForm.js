@@ -147,61 +147,6 @@ export default function FillForm(props) {
   const [habitation, setHabitation] = React.useState(formValue.habitation || 0);
 
   const [street, setStreet] = React.useState(formValue.street || 0);
-
-  const [infiltrationgalleryName, setinfiltrationgalleryName] = React.useState(
-    formValue.infiltrationgalleryName || ""
-  );
-  const [infiltrationwellName, setinfiltrationwellName] = React.useState(
-    formValue.infiltrationwellName || ""
-  );
-  const [openwellName, setopenwellName] = React.useState(
-    formValue.openwellName || ""
-  );
-  const [borewellName, setborewellName] = React.useState(
-    formValue.borewellName || ""
-  );
-  const [collectionsumpName, setcollectionsumpName] = React.useState(
-    formValue.collectionsumpName || ""
-  );
-  const [pumpingstationName, setpumpingstationName] = React.useState(
-    formValue.pumpingstationName || ""
-  );
-  const [overheadtankName, setoverheadtankName] = React.useState(
-    formValue.overheadtankName || ""
-  );
-  const [roplantName, setroplantName] = React.useState(
-    formValue.roplantName || ""
-  );
-  const [tapfirstName, settapfirstName] = React.useState(
-    formValue.tapfirstName || ""
-  );
-  const [tapmiddleName, settapmiddleName] = React.useState(
-    formValue.tapmiddleName || ""
-  );
-  const [taplastName, settaplastName] = React.useState(
-    formValue.taplastName || ""
-  );
-  const [dateOfWork, setDateOfWork] = React.useState(
-    formValue.dateOfWork || new Date()
-  );
-  const [workersEngaged, setWorkersEngaged] = React.useState(
-    formValue.workersEngaged || 0
-  );
-  const [otherWorkers, setOtherWorkers] = React.useState(
-    formValue.otherWorkers || 0
-  );
-  const [housesEngaged, setHousesEngaged] = React.useState(
-    formValue.housesEngaged || 0
-  );
-  const [housesCleared, setHousesCleared] = React.useState(
-    formValue.housesCleared || 0
-  );
-  const [containersDestroyed, setContainersDestroyed] = React.useState(
-    formValue.containersDestroyed || 0
-  );
-  const [dateOfFogging, setDateOfFogging] = React.useState(
-    formValue.dateOfFogging || new Date()
-  );
   const classes = useStyles();
   // const [states, setStates] = React.useState("");
   // const [state, setState] = React.useState("");
@@ -220,6 +165,10 @@ export default function FillForm(props) {
   const [breteauIndex, setBreteauIndex] = React.useState(
     formValue.breteauIndex || 0
   );
+  const [visitType, setVisitType] = React.useState(formValue.visitType || "");
+  const [visitReason, setVisitReason] = React.useState(
+    formValue.visitReason || ""
+  );
   const [webcamEnabled, setWebcamEnabled] = React.useState(false);
   const [dateOfInspection, setDateOfInspection] = React.useState(new Date());
   const [numberOfHouses, setNumberOfHouses] = React.useState(
@@ -233,40 +182,26 @@ export default function FillForm(props) {
   );
   const handleSubmit = async (op = "insert", id) => {
     const payload = {
-      district,
-      hud,
-      block,
-      village,
-      habitation,
-      placeType,
-      dateOfInspection,
-      defaultImage,
-      positiveHouses,
-      houseIndex,
-      containers,
-      containerIndex,
-      breteauIndex,
-      numberOfHouses,
-      infiltrationgalleryName,
-      infiltrationwellName,
-      openwellName,
-      borewellName,
-      collectionsumpName,
-      pumpingstationName,
-      overheadtankName,
-      roplantName,
-      tapfirstName,
-      tapmiddleName,
-      taplastName,
-      dateOfWork,
-      workersEngaged,
-      otherWorkers,
-      housesEngaged,
-      housesCleared,
-      containersDestroyed,
-      dateOfFogging
+      formType: "survey",
+      userId: localStorage.getItem("userId"),
+      body: {
+        district,
+        hud,
+        block,
+        village,
+        habitation,
+        placeType,
+        dateOfInspection,
+        defaultImage,
+        positiveHouses,
+        houseIndex,
+        containers,
+        containerIndex,
+        breteauIndex,
+        numberOfHouses
+      }
     };
-    await Http.submitFormData(payload, op, id);
+    await Http.submitVectorFormData(payload, op, id);
   };
 
   const capture = React.useCallback(() => {
@@ -281,11 +216,6 @@ export default function FillForm(props) {
 
   const handleDateChange = date => {
     setDateOfInspection(date);
-  };
-
-  const setWaterParamState = (varName, event) => {
-    const targetVal = (event.target || {}).value;
-    eval("set" + varName)(targetVal);
   };
 
   const handleChange = (fn, event) => {
@@ -341,11 +271,21 @@ export default function FillForm(props) {
     if (fn === "placetype") {
       setPlaceType(targetVal);
     }
+    if (fn === "visitType") {
+      setVisitType(targetVal);
+    }
+    if (fn === "visitReason") {
+      setVisitReason(targetVal);
+    }
     if (fn === "numberofhouses") {
       setNumberOfHouses(targetVal);
+      setHouseIndex((Number(positiveHouses) / Number(targetVal)) * 100);
     }
     if (fn === "positivehouses") {
       setPositiveHouses(targetVal);
+      if (Number(targetVal) !== 0) {
+        setHouseIndex((Number(targetVal) / Number(numberOfHouses)) * 100);
+      }
     }
     if (fn === "houseindex") {
       setHouseIndex(targetVal);
@@ -584,6 +524,50 @@ export default function FillForm(props) {
                 </GridItem>
               </GridContainer>
               <GridContainer>
+                <GridItem xs={12} sm={12} md={4}>
+                  <FormControl className={classes.formControl}>
+                    <InputLabel id="demo-simple-select-helper-label">
+                      Type of Visit
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-helper-label"
+                      value={visitType}
+                      onChange={handleChange.bind(null, "visitType")}
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      {["First", "Follow Up"].map((i, idx) => (
+                        <MenuItem value={i} key={idx}>
+                          {i}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={4}>
+                  <FormControl className={classes.formControl}>
+                    <InputLabel id="demo-simple-select-helper-label">
+                      Reason for Visit
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-helper-label"
+                      value={visitReason}
+                      onChange={handleChange.bind(null, "visitReason")}
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      {["Fever", "Dengue", "Mosquito Audit"].map((i, idx) => (
+                        <MenuItem value={i} key={idx}>
+                          {i}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </GridItem>
+              </GridContainer>
+              <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   {webcamEnabled ? (
                     <div>
@@ -730,210 +714,16 @@ export default function FillForm(props) {
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem xs={12} sm={12} md={12} className={classes.padContainer}>
-          <Card>
-            <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Water Sample Details</h4>
-              {/* <p className={classes.cardCategoryWhite}>Complete your profile</p> */}
-            </CardHeader>
-            <CardBody>
-              <GridContainer
-                style={{
-                  padding: "0 5%"
-                }}
-              >
-                {waterSampleParams.map((param, idx) => (
-                  <GridItem xs={12} sm={12} md={12} key={idx}>
-                    <ExpansionPanel>
-                      <ExpansionPanelSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                      >
-                        <Typography className={classes.heading}>
-                          {param.name}
-                        </Typography>
-                      </ExpansionPanelSummary>
-                      <ExpansionPanelDetails style={{ width: "100%" }}>
-                        <Typography style={{ width: "100%" }}>
-                          <GridContainer>
-                            <GridItem xs={12} sm={12} md={4}>
-                              <CustomInput
-                                labelText="name"
-                                id={`${param.val}.name`}
-                                formControlProps={{
-                                  fullWidth: true
-                                }}
-                                inputProps={{
-                                  value: eval(param.val + "Name"),
-                                  onChange: setWaterParamState.bind(
-                                    null,
-                                    `${param.val}Name`
-                                  )
-                                }}
-                              />
-                            </GridItem>
-                            <GridItem xs={12} sm={12} md={4}>
-                              <CustomInput
-                                labelText={`Latitude ${latitude} | Longitude ${longitude}`}
-                                id="company-disabled"
-                                formControlProps={{
-                                  fullWidth: true
-                                }}
-                                inputProps={{
-                                  disabled: true
-                                }}
-                              />
-                            </GridItem>
-                            {/* <GridItem xs={12} sm={12} md={4}>
-                              <CustomInput
-                                labelText={`Latitude ${latitude} | Longitude ${longitude}`}
-                                id="company-disabled"
-                                formControlProps={{
-                                  fullWidth: true
-                                }}
-                                inputProps={{
-                                  disabled: true
-                                }}
-                              />
-                            </GridItem> */}
-                          </GridContainer>
-                        </Typography>
-                      </ExpansionPanelDetails>
-                    </ExpansionPanel>
-                  </GridItem>
-                ))}
-              </GridContainer>
-            </CardBody>
-          </Card>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={12} className={classes.padContainer}>
-          <Card>
-            <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>
-                Action taken Details - DBC Deployment
-              </h4>
-              {/* <p className={classes.cardCategoryWhite}>Complete your profile</p> */}
-            </CardHeader>
-            <CardBody>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={4}>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <KeyboardDatePicker
-                      className={classes.formControl}
-                      margin="normal"
-                      id="dateofwork"
-                      label="Date of Work"
-                      format="MM/dd/yyyy"
-                      value={dateOfWork}
-                      onChange={setWaterParamState.bind(null, "DateOfWork")}
-                      KeyboardButtonProps={{
-                        "aria-label": "change date"
-                      }}
-                    />
-                  </MuiPickersUtilsProvider>
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Number of DBC workers Engaged"
-                    id="dbcworkers"
-                    formControlProps={{
-                      fullWidth: true
-                    }}
-                    inputProps={{
-                      type: "number",
-                      value: workersEngaged,
-                      onChange: setWaterParamState.bind(null, "WorkersEngaged")
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Number of other Workers"
-                    id="otherworkers"
-                    formControlProps={{
-                      fullWidth: true
-                    }}
-                    inputProps={{
-                      type: "number",
-                      value: otherWorkers,
-                      onChange: setWaterParamState.bind(null, "OtherWorkers")
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Number of Houses Engaged"
-                    id="housesengaged"
-                    formControlProps={{
-                      fullWidth: true
-                    }}
-                    inputProps={{
-                      type: "number",
-                      value: housesEngaged,
-                      onChange: setWaterParamState.bind(null, "HousesEngaged")
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Number of Houses Cleared"
-                    id="housescleared"
-                    formControlProps={{
-                      fullWidth: true
-                    }}
-                    inputProps={{
-                      type: "number",
-                      value: housesCleared,
-                      onChange: setWaterParamState.bind(null, "HousesCleared")
-                    }}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
-                  <CustomInput
-                    labelText="Number of Containers destroyed"
-                    id="containersdestroyed"
-                    formControlProps={{
-                      fullWidth: true
-                    }}
-                    inputProps={{
-                      type: "number",
-                      value: containersDestroyed,
-                      onChange: setWaterParamState.bind(
-                        null,
-                        "ContainersDestroyed"
-                      )
-                    }}
-                  />
-                </GridItem>
-              </GridContainer>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={4}>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                    <KeyboardDatePicker
-                      className={classes.formControl}
-                      margin="normal"
-                      id="dateoffogging"
-                      label="Date of Fogging"
-                      format="MM/dd/yyyy"
-                      value={dateOfFogging}
-                      onChange={setWaterParamState.bind(null, "DateOfFogging")}
-                      KeyboardButtonProps={{
-                        "aria-label": "change date"
-                      }}
-                    />
-                  </MuiPickersUtilsProvider>
-                </GridItem>
-              </GridContainer>
-            </CardBody>
-          </Card>
-        </GridItem>
-
-        <CardFooter>
+        <CardFooter
+          style={{
+            width: "100%"
+          }}
+        >
           <Button
             color="primary"
+            style={{
+              marginLeft: "50%"
+            }}
             onClick={handleSubmit.bind(
               null,
               stateProps.id ? "update" : "create",

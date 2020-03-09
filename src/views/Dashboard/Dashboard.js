@@ -104,7 +104,7 @@ export default function Dashboard() {
     Http.getDashBoardData().then(res => {
       setInitData(res);
     });
-  });
+  }, []);
   const responseMap = {
     countries: "states",
     states: "districts",
@@ -422,13 +422,25 @@ export default function Dashboard() {
                       <MenuItem value="">
                         <em>None</em>
                       </MenuItem>
-                      {[
-                        "House",
-                        "Institutions",
-                        "Govt Building",
-                        "Open Place",
-                        "Others"
-                      ].map((i, idx) => (
+                      {(localStorage.getItem("appName") === "vector"
+                        ? [
+                            "House",
+                            "Institutions",
+                            "Govt Building",
+                            "Open Place",
+                            "Others"
+                          ]
+                        : [
+                            "Corporation",
+                            "Municipalities",
+                            "Town Panchayats",
+                            "Government Hospitals",
+                            "Government Homes",
+                            "Railway Stations",
+                            "Prisons",
+                            "Government Institutions"
+                          ]
+                      ).map((i, idx) => (
                         <MenuItem value={i} key={idx}>
                           {i}
                         </MenuItem>

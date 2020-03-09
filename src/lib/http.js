@@ -1,9 +1,12 @@
-import rp from "request-promise-native";
-rp.defaults({
+// import rp from "request-promise-native";
+
+const rp = require("request-promise-native").defaults({
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json"
   },
+  jar: true,
+  json: true,
   resolveWithFullResponse: false
 });
 
@@ -215,16 +218,22 @@ export function getResponse(key = "countries", id) {
   });
 }
 
-export function getLineListData() {
+export function getLineListData(path = "vector") {
+  console.log(path);
   return rp({
-    uri: `${global.apiBaseUrl}/vector/lineList`,
+    uri: `${global.apiBaseUrl}/${
+      path !== "vector" ? "water" : "vector"
+    }/lineList`,
     json: true
   });
 }
 
-export function applyFilter(params) {
+export function applyFilter(params, path = "vector") {
+  console.log(path);
   return rp({
-    uri: `${global.apiBaseUrl}/vector/lineList`,
+    uri: `${global.apiBaseUrl}/${
+      path !== "vector" ? "water" : "vector"
+    }/lineList`,
     method: "POST",
     body: params,
     json: true,
@@ -239,20 +248,46 @@ export function getDashBoardData() {
   });
 }
 
-export function getVectorEntry(id) {
+export function getEntry(id, path = "vector", recordType) {
   return rp({
-    uri: `${global.apiBaseUrl}/vector?id=${id}`,
+    uri: `${global.apiBaseUrl}/${
+      path !== "vector" ? "water" : "vector"
+    }?id=${id}&recordType=${recordType}&userId=${localStorage.getItem(
+      "userId"
+    )}`,
     json: true
   });
 }
 
-export function submitFormData(inputObject, op, id) {
+export function submitVectorFormData(inputObject, op, id) {
   const options = {
     jar: true,
     json: true,
     url: `${global.apiBaseUrl}/vector?op=${op}&id=${id}`,
     method: "POST",
     body: inputObject
+  };
+  console.log(options);
+  return rp(options);
+}
+
+export function submitWaterFormData(inputObject, op, id) {
+  const options = {
+    jar: true,
+    json: true,
+    url: `${global.apiBaseUrl}/water?op=${op}&id=${id}`,
+    method: "POST",
+    body: inputObject
+  };
+  console.log(options);
+  return rp(options);
+}
+
+export function submitLogin(payload) {
+  const options = {
+    method: "POST",
+    url: `${global.apiBaseUrl}/login`,
+    body: payload
   };
   console.log(options);
   return rp(options);

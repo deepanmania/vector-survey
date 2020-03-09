@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/material-dashboard-react/static/css/main.0fa7ec49.chunk.css",
+    "main.js": "/material-dashboard-react/static/js/main.eefc2102.chunk.js",
+    "main.js.map": "/material-dashboard-react/static/js/main.eefc2102.chunk.js.map",
+    "runtime~main.js": "/material-dashboard-react/static/js/runtime~main.ce1216ca.js",
+    "runtime~main.js.map": "/material-dashboard-react/static/js/runtime~main.ce1216ca.js.map",
+    "static/js/2.f48b36e0.chunk.js": "/material-dashboard-react/static/js/2.f48b36e0.chunk.js",
+    "static/js/2.f48b36e0.chunk.js.map": "/material-dashboard-react/static/js/2.f48b36e0.chunk.js.map",
+    "index.html": "/material-dashboard-react/index.html",
+    "precache-manifest.5fe46c3319c73ce62409a04cca1fa63a.js": "/material-dashboard-react/precache-manifest.5fe46c3319c73ce62409a04cca1fa63a.js",
+    "service-worker.js": "/material-dashboard-react/service-worker.js",
+    "static/css/main.0fa7ec49.chunk.css.map": "/material-dashboard-react/static/css/main.0fa7ec49.chunk.css.map"
+  }
+}
