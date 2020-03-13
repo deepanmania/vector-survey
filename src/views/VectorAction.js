@@ -178,6 +178,9 @@ export default function FillForm(props) {
   const [placeType, setPlaceType] = React.useState("");
 
   const [webcamEnabled, setWebcamEnabled] = React.useState(false);
+  const [visitReason, setVisitReason] = React.useState(
+    formValue.visitReason || ""
+  );
   const [dateOfInspection, setDateOfInspection] = React.useState(new Date());
   const { latitude, longitude } = usePosition(true);
   const webcamRef = React.useRef(null);
@@ -198,6 +201,7 @@ export default function FillForm(props) {
         placeType,
         dateOfInspection,
         defaultImage,
+        visitReason,
         dateOfWork,
         workersEngaged,
         otherWorkers,
@@ -281,6 +285,9 @@ export default function FillForm(props) {
     }
     if (fn === "placetype") {
       setPlaceType(targetVal);
+    }
+    if (fn === "visitReason") {
+      setVisitReason(targetVal);
     }
   };
 
@@ -451,6 +458,38 @@ export default function FillForm(props) {
                 <GridItem xs={12} sm={12} md={4}>
                   <FormControl className={classes.formControl}>
                     <InputLabel id="demo-simple-select-helper-label">
+                      Reason for Visit
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-helper-label"
+                      value={visitReason}
+                      onChange={handleChange.bind(null, "visitReason")}
+                    >
+                      <MenuItem value="">
+                        <em>None</em>
+                      </MenuItem>
+                      {[
+                        "Markets",
+                        "Industries",
+                        "Educational institutions ",
+                        "Shopping complex",
+                        "Commercial complex",
+                        "Railway station",
+                        "Bus stand",
+                        "Worship area",
+                        "Prison",
+                        "Locked house"
+                      ].map((i, idx) => (
+                        <MenuItem value={i} key={idx}>
+                          {i}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </GridItem>
+                <GridItem xs={12} sm={12} md={4}>
+                  <FormControl className={classes.formControl}>
+                    <InputLabel id="demo-simple-select-helper-label">
                       Place Type
                     </InputLabel>
                     <Select
@@ -493,7 +532,7 @@ export default function FillForm(props) {
                     />
                   </MuiPickersUtilsProvider>
                 </GridItem>
-                <GridItem xs={12} sm={12} md={4}>
+                {/* <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
                     labelText={`Latitude ${latitude} | Longitude ${longitude}`}
                     id="company-disabled"
@@ -504,7 +543,7 @@ export default function FillForm(props) {
                       disabled: true
                     }}
                   />
-                </GridItem>
+                </GridItem> */}
               </GridContainer>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>

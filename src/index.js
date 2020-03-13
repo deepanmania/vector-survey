@@ -14,8 +14,8 @@ import "assets/css/material-dashboard-react.css?v=1.8.0";
 
 const hist = createBrowserHistory();
 global.apiUrl = "https://master-dev.uhcitp.in";
-// global.apiBaseUrl = "http://localhost:9000";
-global.apiBaseUrl = "https://vector-api-endpoint.herokuapp.com";
+global.apiBaseUrl = "http://localhost:9000";
+// global.apiBaseUrl = "https://vector-api-endpoint.herokuapp.com";
 ReactDOM.render(
   <Router history={hist}>
     <Switch>

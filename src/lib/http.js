@@ -283,6 +283,18 @@ export function submitWaterFormData(inputObject, op, id) {
   return rp(options);
 }
 
+export function submitWaterLabFormData(inputObject, id) {
+  const options = {
+    jar: true,
+    json: true,
+    url: `${global.apiBaseUrl}/water?id=${id}&lab=true`,
+    method: "POST",
+    body: inputObject
+  };
+  console.log(options);
+  return rp(options);
+}
+
 export function submitLogin(payload) {
   const options = {
     method: "POST",

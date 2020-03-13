@@ -190,11 +190,17 @@ export default function Header(props) {
               localStorage.getItem("appName") === "vector"
                 ? "/fillform"
                 : "/waterform",
-            title: "Vector Survey",
+            title:
+              localStorage.getItem("appName") === "vector"
+                ? "Vector Survey"
+                : "Water Survey",
             icon: ""
           },
           {
-            route: "/vector-action",
+            route:
+              localStorage.getItem("appName") === "vector"
+                ? "/vector-action"
+                : "/water-action",
             title: "Action Taken",
             icon: ""
           }

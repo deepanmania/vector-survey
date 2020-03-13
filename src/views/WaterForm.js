@@ -25,7 +25,7 @@ import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Icon from "@material-ui/core/Icon";
 // tabs
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
 
 import {
   MuiPickersUtilsProvider,
@@ -274,9 +274,9 @@ export default function FillForm(props) {
     formValue.totalColonyCount || 0
   );
   const [mpn, setMpn] = React.useState(formValue.mpn || 0);
-  const [rapidEcoliTests, setRapidEcoliTests] = React.useState(
-    formValue.rapidEcoliTests || ""
-  );
+  // const [rapidEcoliTests, setRapidEcoliTests] = React.useState(
+  //   formValue.rapidEcoliTests || ""
+  // );
   const [brilliantGreenTest, setBrilliantGreenTest] = React.useState(
     formValue.brilliantGreenTest || ""
   );
@@ -367,12 +367,64 @@ export default function FillForm(props) {
       taplastName,
       samplesTaken
     };
-    await Http.submitWaterFormData(payload, op, id);
+    await Http.submitWaterFormData(payload, op, id).then(() => {
+      if (localStorage.getItem("appName") === "water-lab") {
+        const labPayload = {
+          sampleReceivedDate,
+          sampleTestedDate,
+          testType,
+          reportingDate,
+          color,
+          turbidity,
+          odour,
+          totalDissolvedSolids,
+          hardness,
+          carbonateHardness,
+          nonCarbonateHardness,
+          totalHardness,
+          chlorideAsChlorine,
+          ammonicalNitrogen,
+          oxygenAbsorption,
+          nitrate,
+          phenophthalein,
+          methylOrange,
+          fluoride,
+          ph,
+          totalIron,
+          nitrite,
+          sulphate,
+          phosphate,
+          electricalConductivity,
+          totalColonyCount,
+          mpn,
+          brilliantGreenTest,
+          indoleTest,
+          citrate,
+          triptone,
+          glucosePhosphateMethylRed,
+          singleBroth,
+          vibrioCholerae,
+          fecalStreptococci,
+          clostridiumPerfereingenes,
+          salmonellaAndShigella,
+          pseudomonas,
+          staphylococcus,
+          yeastAndMould,
+          lipolyticBacterialCount,
+          proteolyticBacterialCount,
+          thermophilicBacterialCount,
+          microscopicalExam
+        };
+        return Http.submitWaterLabFormData(labPayload, id);
+      }
+    });
   };
 
   const handleDateChange = date => {
     setDateOfInspection(date);
   };
+
+  const status = ["positive", "negative"];
 
   const setWaterParamState = (varName, event) => {
     const targetVal = (event.target || {}).value;
@@ -797,10 +849,10 @@ export default function FillForm(props) {
                           id="date-picker-dialog"
                           label="Date of Sample Tested"
                           format="MM/dd/yyyy"
-                          value={sampleReceivedDate}
+                          value={sampleTestedDate}
                           onChange={setWaterParamState.bind(
                             null,
-                            "SampleReceivedDate"
+                            "SampleTestedDate"
                           )}
                           KeyboardButtonProps={{
                             "aria-label": "change date"
@@ -1293,21 +1345,26 @@ export default function FillForm(props) {
                         }}
                       />
                     </GridItem>
+                  </GridContainer>
+                  <h4>Rapid Ecoli tests</h4>
+                  <GridContainer>
                     <GridItem xs={12} sm={12} md={3}>
                       <FormControl className={classes.formControl}>
                         <InputLabel id="demo-simple-select-helper-label">
-                          Nitrite
+                          Brilliant green test
                         </InputLabel>
                         <Select
                           labelId="demo-simple-select-helper-label"
-                          id="Nitrite"
-                          value={nitrite}
-                          onChange={setWaterParamState.bind(null, "Nitrite")}
+                          value={brilliantGreenTest}
+                          onChange={setWaterParamState.bind(
+                            null,
+                            "BrilliantGreenTest"
+                          )}
                         >
                           <MenuItem value="">
                             <em>None</em>
                           </MenuItem>
-                          {(nitriteArr || []).map((i, idx) => (
+                          {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
                             </MenuItem>
@@ -1318,24 +1375,372 @@ export default function FillForm(props) {
                     <GridItem xs={12} sm={12} md={3}>
                       <FormControl className={classes.formControl}>
                         <InputLabel id="demo-simple-select-helper-label">
-                          Sulphate
+                          Indole test
                         </InputLabel>
                         <Select
                           labelId="demo-simple-select-helper-label"
-                          id="Sulphate"
-                          value={sulphate}
-                          onChange={setWaterParamState.bind(null, "Sulphate")}
+                          value={indoleTest}
+                          onChange={setWaterParamState.bind(null, "IndoleTest")}
                         >
                           <MenuItem value="">
                             <em>None</em>
                           </MenuItem>
-                          {(sulphateArr || []).map((i, idx) => (
+                          {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
                             </MenuItem>
                           ))}
                         </Select>
                       </FormControl>
+                    </GridItem>
+                  </GridContainer>
+                  <h4>
+                    Confirmation test: Sugar tests (E.coli, Citrobacter,
+                    klebsiella, Irregular)
+                  </h4>
+                  <GridContainer>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Citrate
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          value={citrate}
+                          onChange={setWaterParamState.bind(null, "Citrate")}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {status.map((i, idx) => (
+                            <MenuItem value={i} key={idx}>
+                              {i}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Triptone -Indole
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          value={triptone}
+                          onChange={setWaterParamState.bind(null, "Triptone")}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {status.map((i, idx) => (
+                            <MenuItem value={i} key={idx}>
+                              {i}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Glucose phosphate-Methyl Red
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          value={glucosePhosphateMethylRed}
+                          onChange={setWaterParamState.bind(
+                            null,
+                            "GlucosePhosphateMethylRed"
+                          )}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {status.map((i, idx) => (
+                            <MenuItem value={i} key={idx}>
+                              {i}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Single broth
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          value={singleBroth}
+                          onChange={setWaterParamState.bind(
+                            null,
+                            "SingleBroth"
+                          )}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {status.map((i, idx) => (
+                            <MenuItem value={i} key={idx}>
+                              {i}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                  </GridContainer>
+                  <h4>Special tests</h4>
+                  <GridContainer>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Test for Vibrio cholerae
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          value={vibrioCholerae}
+                          onChange={setWaterParamState.bind(
+                            null,
+                            "VibrioCholerae"
+                          )}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {status.map((i, idx) => (
+                            <MenuItem value={i} key={idx}>
+                              {i}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Test for fecal streptococci
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          value={fecalStreptococci}
+                          onChange={setWaterParamState.bind(
+                            null,
+                            "FecalStreptococci"
+                          )}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {status.map((i, idx) => (
+                            <MenuItem value={i} key={idx}>
+                              {i}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Test for Clostridium perfereingenes
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          value={clostridiumPerfereingenes}
+                          onChange={setWaterParamState.bind(
+                            null,
+                            "ClostridiumPerfereingenes"
+                          )}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {status.map((i, idx) => (
+                            <MenuItem value={i} key={idx}>
+                              {i}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Test for Salmonella & Shigella
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          value={salmonellaAndShigella}
+                          onChange={setWaterParamState.bind(
+                            null,
+                            "SalmonellaAndShigella"
+                          )}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {status.map((i, idx) => (
+                            <MenuItem value={i} key={idx}>
+                              {i}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                  </GridContainer>
+                  <GridContainer>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Test for Pseudomonas
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          value={pseudomonas}
+                          onChange={setWaterParamState.bind(
+                            null,
+                            "Pseudomonas"
+                          )}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {status.map((i, idx) => (
+                            <MenuItem value={i} key={idx}>
+                              {i}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Staphylococcus
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          value={staphylococcus}
+                          onChange={setWaterParamState.bind(
+                            null,
+                            "Staphylococcus"
+                          )}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {status.map((i, idx) => (
+                            <MenuItem value={i} key={idx}>
+                              {i}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-helper-label">
+                          Yeast & Mould
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-helper-label"
+                          value={yeastAndMould}
+                          onChange={setWaterParamState.bind(
+                            null,
+                            "YeastAndMould"
+                          )}
+                        >
+                          <MenuItem value="">
+                            <em>None</em>
+                          </MenuItem>
+                          {status.map((i, idx) => (
+                            <MenuItem value={i} key={idx}>
+                              {i}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <CustomInput
+                        labelText="Lipolytic bacterial count"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          type: "number",
+                          value: lipolyticBacterialCount,
+                          onChange: setWaterParamState.bind(
+                            null,
+                            "LipolyticBacterialCount"
+                          )
+                        }}
+                      />
+                    </GridItem>
+                  </GridContainer>
+                  <GridContainer>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <CustomInput
+                        labelText="Proteolytic bacterial count"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          type: "number",
+                          value: proteolyticBacterialCount,
+                          onChange: setWaterParamState.bind(
+                            null,
+                            "ProteolyticBacterialCount"
+                          )
+                        }}
+                      />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <CustomInput
+                        labelText="Thermophilic bacterial count"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          type: "number",
+                          value: thermophilicBacterialCount,
+                          onChange: setWaterParamState.bind(
+                            null,
+                            "ThermophilicBacterialCount"
+                          )
+                        }}
+                      />
+                    </GridItem>
+                  </GridContainer>
+                </CardBody>
+              </Card>
+            </GridItem>
+            <GridItem xs={12} sm={12} md={12} className={classes.padContainer}>
+              <Card>
+                <CardHeader color="primary">
+                  <h4 className={classes.cardTitleWhite}>
+                    Biological Examination
+                  </h4>
+                  {/* <p className={classes.cardCategoryWhite}>Complete your profile</p> */}
+                </CardHeader>
+                <CardBody>
+                  <GridContainer>
+                    <GridItem xs={12} sm={12} md={3}>
+                      <CustomInput
+                        labelText="Microscopical Exam"
+                        formControlProps={{
+                          fullWidth: true
+                        }}
+                        inputProps={{
+                          type: "text",
+                          value: microscopicalExam,
+                          onChange: setWaterParamState.bind(
+                            null,
+                            "MicroscopicalExam"
+                          )
+                        }}
+                      />
                     </GridItem>
                   </GridContainer>
                 </CardBody>

@@ -5,6 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 // core components
 import GridItem from "components/Grid/GridItem.js";
+import Icon from "@material-ui/core/Icon";
 import GridContainer from "components/Grid/GridContainer.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
@@ -37,6 +38,7 @@ import Select from "@material-ui/core/Select";
 import { usePosition } from "use-position";
 
 import { Http } from "lib";
+import { container } from "assets/jss/material-dashboard-react";
 
 const videoConstraints = {
   width: 500,
@@ -157,10 +159,16 @@ export default function FillForm(props) {
   const [positiveHouses, setPositiveHouses] = React.useState(
     formValue.positiveHouses || 0
   );
+  const [samplesTaken, setSamplesTaken] = React.useState(
+    formValue.samplesTaken || 0
+  );
   const [houseIndex, setHouseIndex] = React.useState(formValue.houseIndex || 0);
   const [containers, setContainers] = React.useState(formValue.containers || 0);
   const [containerIndex, setContainerIndex] = React.useState(
     formValue.containerIndex || 0
+  );
+  const [positiveContainers, setPositiveContainers] = React.useState(
+    formValue.positiveContainers || 0
   );
   const [breteauIndex, setBreteauIndex] = React.useState(
     formValue.breteauIndex || 0
@@ -169,6 +177,44 @@ export default function FillForm(props) {
   const [visitReason, setVisitReason] = React.useState(
     formValue.visitReason || ""
   );
+  const setWaterParamState = (varName, event) => {
+    const targetVal = (event.target || {}).value;
+    eval("set" + varName)(targetVal);
+  };
+  const [infiltrationgalleryName, setinfiltrationgalleryName] = React.useState(
+    formValue.infiltrationgalleryName || ""
+  );
+  const [infiltrationwellName, setinfiltrationwellName] = React.useState(
+    formValue.infiltrationwellName || ""
+  );
+  const [openwellName, setopenwellName] = React.useState(
+    formValue.openwellName || ""
+  );
+  const [borewellName, setborewellName] = React.useState(
+    formValue.borewellName || ""
+  );
+  const [collectionsumpName, setcollectionsumpName] = React.useState(
+    formValue.collectionsumpName || ""
+  );
+  const [pumpingstationName, setpumpingstationName] = React.useState(
+    formValue.pumpingstationName || ""
+  );
+  const [overheadtankName, setoverheadtankName] = React.useState(
+    formValue.overheadtankName || ""
+  );
+  const [roplantName, setroplantName] = React.useState(
+    formValue.roplantName || ""
+  );
+  const [tapfirstName, settapfirstName] = React.useState(
+    formValue.tapfirstName || ""
+  );
+  const [tapmiddleName, settapmiddleName] = React.useState(
+    formValue.tapmiddleName || ""
+  );
+  const [taplastName, settaplastName] = React.useState(
+    formValue.taplastName || ""
+  );
+
   const [webcamEnabled, setWebcamEnabled] = React.useState(false);
   const [dateOfInspection, setDateOfInspection] = React.useState(new Date());
   const [numberOfHouses, setNumberOfHouses] = React.useState(
@@ -279,7 +325,9 @@ export default function FillForm(props) {
     }
     if (fn === "numberofhouses") {
       setNumberOfHouses(targetVal);
-      setHouseIndex((Number(positiveHouses) / Number(targetVal)) * 100);
+      if (Number(targetVal) !== 0) {
+        setHouseIndex((Number(positiveHouses) / Number(targetVal)) * 100);
+      }
     }
     if (fn === "positivehouses") {
       setPositiveHouses(targetVal);
@@ -292,6 +340,17 @@ export default function FillForm(props) {
     }
     if (fn === "containers") {
       setContainers(targetVal);
+      if (Number(targetVal) !== 0) {
+        setContainerIndex(
+          (Number(positiveContainers) / Number(targetVal)) * 100
+        );
+      }
+    }
+    if (fn === "positiveContainers") {
+      setPositiveContainers(targetVal);
+      if (Number(targetVal) !== 0) {
+        setContainerIndex((Number(targetVal) / Number(containers)) * 100);
+      }
     }
     if (fn === "containerindex") {
       setContainerIndex(targetVal);
@@ -619,6 +678,99 @@ export default function FillForm(props) {
         <GridItem xs={12} sm={12} md={12} className={classes.padContainer}>
           <Card>
             <CardHeader color="primary">
+              <h4 className={classes.cardTitleWhite}>
+                Status of water chlorination
+              </h4>
+              {/* <p className={classes.cardCategoryWhite}>Complete your profile</p> */}
+            </CardHeader>
+            <CardBody>
+              <GridContainer
+                style={{
+                  padding: "0 5%"
+                }}
+              >
+                {waterSampleParams.map((param, idx) => (
+                  <GridItem xs={12} sm={12} md={12} key={idx}>
+                    <ExpansionPanel>
+                      <ExpansionPanelSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                      >
+                        <Typography className={classes.heading}>
+                          {param.name}
+                        </Typography>
+                      </ExpansionPanelSummary>
+                      <ExpansionPanelDetails style={{ width: "100%" }}>
+                        <Typography style={{ width: "100%" }}>
+                          <GridContainer>
+                            <GridItem xs={12} sm={12} md={4}>
+                              <CustomInput
+                                labelText="name"
+                                id={`${param.val}.name`}
+                                formControlProps={{
+                                  fullWidth: true
+                                }}
+                                inputProps={{
+                                  value: eval(param.val + "Name"),
+                                  onChange: setWaterParamState.bind(
+                                    null,
+                                    `${param.val}Name`
+                                  )
+                                }}
+                              />
+                            </GridItem>
+                            <GridItem xs={12} sm={12} md={4}>
+                              <CustomInput
+                                labelText={`Latitude ${latitude} | Longitude ${longitude}`}
+                                id="company-disabled"
+                                formControlProps={{
+                                  fullWidth: true
+                                }}
+                                inputProps={{
+                                  disabled: true
+                                }}
+                              />
+                            </GridItem>
+                            <GridItem xs={12} sm={12} md={4}>
+                              <Icon
+                                fontSize="large"
+                                style={{
+                                  paddingTop: "8%",
+                                  paddingLeft: "30%"
+                                }}
+                              >
+                                add_a_photo
+                              </Icon>
+                            </GridItem>
+                          </GridContainer>
+                        </Typography>
+                      </ExpansionPanelDetails>
+                    </ExpansionPanel>
+                  </GridItem>
+                ))}
+                <GridItem xs={12} sm={12} md={4}>
+                  <CustomInput
+                    labelText="Number of Samples Taken"
+                    id="samplestaken"
+                    formControlProps={{
+                      fullWidth: true
+                    }}
+                    inputProps={{
+                      type: "number",
+                      value: samplesTaken,
+                      onChange: setWaterParamState.bind(null, "SamplesTaken")
+                    }}
+                  />
+                </GridItem>
+              </GridContainer>
+            </CardBody>
+          </Card>
+        </GridItem>
+
+        <GridItem xs={12} sm={12} md={12} className={classes.padContainer}>
+          <Card>
+            <CardHeader color="primary">
               <h4 className={classes.cardTitleWhite}>Inspection Details</h4>
               {/* <p className={classes.cardCategoryWhite}>Complete your profile</p> */}
             </CardHeader>
@@ -684,6 +836,19 @@ export default function FillForm(props) {
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
+                    labelText="Number of Container with Breeding positive"
+                    formControlProps={{
+                      fullWidth: true
+                    }}
+                    inputProps={{
+                      type: "number",
+                      value: positiveContainers,
+                      onChange: handleChange.bind(null, "positiveContainers")
+                    }}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={12} md={4}>
+                  <CustomInput
                     labelText="Computed Indices - Container Index"
                     id="containerindex"
                     formControlProps={{
@@ -696,6 +861,8 @@ export default function FillForm(props) {
                     }}
                   />
                 </GridItem>
+              </GridContainer>
+              <GridContainer>
                 <GridItem xs={12} sm={12} md={4}>
                   <CustomInput
                     labelText="Computed Indices - Breteau Index"
