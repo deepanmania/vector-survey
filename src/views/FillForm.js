@@ -24,6 +24,10 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Modal from "react-bootstrap/Modal";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Snackbar from "components/Snackbar/Snackbar.js";
+import AddAlert from "@material-ui/icons/AddAlert";
 // tabs
 import PropTypes from "prop-types";
 
@@ -41,8 +45,8 @@ import { Http } from "lib";
 import { container } from "assets/jss/material-dashboard-react";
 
 const videoConstraints = {
-  width: 500,
-  height: 500,
+  width: 1280,
+  height: 720,
   facingMode: "environment"
 };
 
@@ -109,7 +113,7 @@ export default function FillForm(props) {
   const [habitations, setHabitations] = React.useState([]);
   const [streets, setStreets] = React.useState([]);
 
-  const formValue = Object.assign({}, stateProps);
+  const formValue = Object.assign({}, (stateProps || {}).entry || {});
   useEffect(() => {
     (async () => {
       if (stateProps.id) {
@@ -179,42 +183,52 @@ export default function FillForm(props) {
   );
   const setWaterParamState = (varName, event) => {
     const targetVal = (event.target || {}).value;
-    eval("set" + varName)(targetVal);
+    const obj = eval(varName);
+    obj.name = targetVal;
+    eval("set" + varName)(Object.assign({}, obj));
   };
-  const [infiltrationgalleryName, setinfiltrationgalleryName] = React.useState(
-    formValue.infiltrationgalleryName || ""
+  const removePic = (param, idx) => {
+    const photos = eval(param).photos;
+    delete photos[idx];
+    const val = eval(param);
+    val.photos = photos.filter(i => !!i);
+    eval(`set${param}`)(Object.assign({}, val));
+  };
+  const [infiltrationgallery, setinfiltrationgallery] = React.useState(
+    formValue.infiltrationgallery || { name: "", photos: [] }
   );
-  const [infiltrationwellName, setinfiltrationwellName] = React.useState(
-    formValue.infiltrationwellName || ""
+  const [infiltrationwell, setinfiltrationwell] = React.useState(
+    formValue.infiltrationwell || { name: "", photos: [] }
   );
-  const [openwellName, setopenwellName] = React.useState(
-    formValue.openwellName || ""
+  const [openwell, setopenwell] = React.useState(
+    formValue.openwell || { name: "", photos: [] }
   );
-  const [borewellName, setborewellName] = React.useState(
-    formValue.borewellName || ""
+  const [borewell, setborewell] = React.useState(
+    formValue.borewell || { name: "", photos: [] }
   );
-  const [collectionsumpName, setcollectionsumpName] = React.useState(
-    formValue.collectionsumpName || ""
+  const [collectionsump, setcollectionsump] = React.useState(
+    formValue.collectionsump || { name: "", photos: [] }
   );
-  const [pumpingstationName, setpumpingstationName] = React.useState(
-    formValue.pumpingstationName || ""
+  const [pumpingstation, setpumpingstation] = React.useState(
+    formValue.pumpingstation || { name: "", photos: [] }
   );
-  const [overheadtankName, setoverheadtankName] = React.useState(
-    formValue.overheadtankName || ""
+  const [overheadtank, setoverheadtank] = React.useState(
+    formValue.overheadtank || { name: "", photos: [] }
   );
-  const [roplantName, setroplantName] = React.useState(
-    formValue.roplantName || ""
+  const [roplant, setroplant] = React.useState(
+    formValue.roplant || { name: "", photos: [] }
   );
-  const [tapfirstName, settapfirstName] = React.useState(
-    formValue.tapfirstName || ""
+  const [tapfirst, settapfirst] = React.useState(
+    formValue.tapfirst || { name: "", photos: [] }
   );
-  const [tapmiddleName, settapmiddleName] = React.useState(
-    formValue.tapmiddleName || ""
+  const [tapmiddle, settapmiddle] = React.useState(
+    formValue.tapmiddle || { name: "", photos: [] }
   );
-  const [taplastName, settaplastName] = React.useState(
-    formValue.taplastName || ""
+  const [taplast, settaplast] = React.useState(
+    formValue.taplast || { name: "", photos: [] }
   );
-
+  const [messageInfo, setmessageInfo] = React.useState("");
+  const [showInfo, setshowInfo] = React.useState(false);
   const [webcamEnabled, setWebcamEnabled] = React.useState(false);
   const [dateOfInspection, setDateOfInspection] = React.useState(new Date());
   const [numberOfHouses, setNumberOfHouses] = React.useState(
@@ -222,10 +236,6 @@ export default function FillForm(props) {
   );
   const { latitude, longitude } = usePosition(true);
   const webcamRef = React.useRef(null);
-  const [defaultImage, setDefaultImage] = React.useState(
-    formValue.defaultImage ||
-      "data:image/jpeg;base64,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"
-  );
   const handleSubmit = async (op = "insert", id) => {
     const payload = {
       formType: "survey",
@@ -238,25 +248,56 @@ export default function FillForm(props) {
         habitation,
         placeType,
         dateOfInspection,
-        defaultImage,
         positiveHouses,
         houseIndex,
         containers,
         containerIndex,
         breteauIndex,
-        numberOfHouses
+        numberOfHouses,
+        infiltrationgallery,
+        infiltrationwell,
+        openwell,
+        borewell,
+        collectionsump,
+        pumpingstation,
+        overheadtank,
+        roplant,
+        tapfirst,
+        tapmiddle,
+        taplast,
+        street,
+        visitType,
+        visitReason,
+        samplesTaken,
+        positiveContainers
       }
     };
-    await Http.submitVectorFormData(payload, op, id);
+    setmessageInfo("Saving");
+    setshowInfo(true);
+    await Http.submitVectorFormData(payload, op, id).then(async () => {
+      setshowInfo(false);
+      props.history.push({
+        pathname: "lineList"
+      });
+    });
   };
 
+  const [paramVal, setParamVal] = React.useState();
   const capture = React.useCallback(() => {
-    const imageSrc = webcamRef.current.getScreenshot();
-    setDefaultImage(imageSrc);
+    const imageSrc = webcamRef.current.getScreenshot({
+      width: 1920,
+      height: 1080
+    });
+    const obj = eval(paramVal);
+    obj.photos.push(imageSrc);
+    eval(`set${paramVal}`)(Object.assign({}, obj));
     setWebcamEnabled(false);
-  }, [webcamRef]);
-
-  const enableCamera = () => {
+  }, [webcamRef, paramVal]);
+  const closeModal = () => {
+    setWebcamEnabled(false);
+  };
+  const enableCamera = val => {
+    setParamVal(val);
     setWebcamEnabled(true);
   };
 
@@ -367,8 +408,36 @@ export default function FillForm(props) {
   )) ? (
     <div>
       <MuiThemeProvider>
-        <Header title="New Entry" />
+        <Header title="Vector Survey" />
       </MuiThemeProvider>
+      <Modal show={webcamEnabled} onHide={closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Take Photo</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <div>
+            <Webcam
+              style={{ width: "100%" }}
+              audio={false}
+              ref={webcamRef}
+              screenshotFormat="image/jpeg"
+              mirrored={true}
+              videoConstraints={videoConstraints}
+              // value={image}
+            />
+            <button
+              onClick={capture}
+              // style={{
+              //   marginLeft: "-9%"
+              // }}
+            >
+              Capture photo
+            </button>
+          </div>
+        </Modal.Body>
+      </Modal>
+
       <GridContainer container={true}>
         <GridItem xs={12} sm={12} md={12} className={classes.padContainer}>
           <Card>
@@ -386,7 +455,7 @@ export default function FillForm(props) {
                       District
                     </InputLabel>
                     <Select
-                      labelId="demo-simple-select-helper-label"
+                      // labelId="demo-simple-select-helper-label"
                       id="district"
                       value={district}
                       onChange={handleChange.bind(null, "districts")}
@@ -559,7 +628,7 @@ export default function FillForm(props) {
                       className={classes.formControl}
                       margin="normal"
                       id="date-picker-dialog"
-                      label="Date of Inspection"
+                      label="Date of Sample Taken"
                       format="MM/dd/yyyy"
                       value={dateOfInspection}
                       onChange={handleDateChange}
@@ -593,6 +662,7 @@ export default function FillForm(props) {
                       value={visitType}
                       onChange={handleChange.bind(null, "visitType")}
                     >
+                      a
                       <MenuItem value="">
                         <em>None</em>
                       </MenuItem>
@@ -626,52 +696,6 @@ export default function FillForm(props) {
                   </FormControl>
                 </GridItem>
               </GridContainer>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={12}>
-                  {webcamEnabled ? (
-                    <div>
-                      <Webcam
-                        style={{ marginLeft: "46%" }}
-                        audio={false}
-                        height={300}
-                        ref={webcamRef}
-                        screenshotFormat="image/jpeg"
-                        width={200}
-                        mirrored={true}
-                        videoConstraints={videoConstraints}
-                        // value={image}
-                      />
-                      <button
-                        onClick={capture}
-                        // style={{
-                        //   marginLeft: "-9%"
-                        // }}
-                      >
-                        Capture photo
-                      </button>
-                    </div>
-                  ) : (
-                    <div>
-                      <img
-                        src={defaultImage}
-                        height={200}
-                        width={200}
-                        style={{
-                          marginLeft: "46%"
-                        }}
-                      />
-                      <button
-                        onClick={enableCamera}
-                        style={{
-                          marginLeft: "-8%"
-                        }}
-                      >
-                        Take Photo
-                      </button>
-                    </div>
-                  )}
-                </GridItem>
-              </GridContainer>
             </CardBody>
           </Card>
         </GridItem>
@@ -701,7 +725,7 @@ export default function FillForm(props) {
                           {param.name}
                         </Typography>
                       </ExpansionPanelSummary>
-                      <ExpansionPanelDetails style={{ width: "100%" }}>
+                      <ExpansionPanelDetails>
                         <Typography style={{ width: "100%" }}>
                           <GridContainer>
                             <GridItem xs={12} sm={12} md={4}>
@@ -712,10 +736,10 @@ export default function FillForm(props) {
                                   fullWidth: true
                                 }}
                                 inputProps={{
-                                  value: eval(param.val + "Name"),
+                                  value: eval(param.val).name,
                                   onChange: setWaterParamState.bind(
                                     null,
-                                    `${param.val}Name`
+                                    `${param.val}`
                                   )
                                 }}
                               />
@@ -733,15 +757,70 @@ export default function FillForm(props) {
                               />
                             </GridItem>
                             <GridItem xs={12} sm={12} md={4}>
-                              <Icon
-                                fontSize="large"
-                                style={{
-                                  paddingTop: "8%",
-                                  paddingLeft: "30%"
-                                }}
-                              >
-                                add_a_photo
-                              </Icon>
+                              <GridContainer>
+                                {eval(param.val)
+                                  .photos.map((pic, idx) => {
+                                    return (
+                                      <GridItem
+                                        key={idx}
+                                        xs={12}
+                                        sm={12}
+                                        md={3}
+                                      >
+                                        <div
+                                          style={{
+                                            position: "relative"
+                                          }}
+                                        >
+                                          <button
+                                            onClick={removePic.bind(
+                                              null,
+                                              param.val,
+                                              idx
+                                            )}
+                                            className="close"
+                                            style={{
+                                              right: "0px",
+                                              position: "absolute"
+                                            }}
+                                          >
+                                            <span>×</span>
+                                          </button>
+                                          <img
+                                            src={pic}
+                                            style={{ cursor: "pointer" }}
+                                            width="100px"
+                                            height="80px"
+                                          />
+                                        </div>
+                                      </GridItem>
+                                    );
+                                  })
+                                  .concat([
+                                    <GridItem
+                                      xs={12}
+                                      sm={12}
+                                      md={3}
+                                      key={eval(param.val).photos.length}
+                                    >
+                                      <Icon
+                                        fontSize="large"
+                                        onClick={enableCamera.bind(
+                                          null,
+                                          param.val
+                                        )}
+                                        style={{
+                                          position: "relative",
+                                          "margin-left": "30%",
+                                          "margin-top": "35%",
+                                          cursor: "pointer"
+                                        }}
+                                      >
+                                        add_a_photo
+                                      </Icon>
+                                    </GridItem>
+                                  ])}
+                              </GridContainer>
                             </GridItem>
                           </GridContainer>
                         </Typography>
@@ -901,6 +980,15 @@ export default function FillForm(props) {
           </Button>
         </CardFooter>
       </GridContainer>
+      <Snackbar
+        place="tr"
+        color="success"
+        icon={AddAlert}
+        message={messageInfo}
+        open={showInfo}
+        closeNotification={() => setshowInfo(false)}
+        close
+      />
     </div>
   ) : (
     <div>Loading...</div>

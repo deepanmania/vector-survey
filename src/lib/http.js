@@ -219,7 +219,10 @@ export function getResponse(key = "countries", id) {
 }
 
 export function getLineListData(path = "vector") {
-  console.log(path);
+  console.log(
+    path,
+    `${global.apiBaseUrl}/${path !== "vector" ? "water" : "vector"}/lineList`
+  );
   return rp({
     uri: `${global.apiBaseUrl}/${
       path !== "vector" ? "water" : "vector"
@@ -229,7 +232,7 @@ export function getLineListData(path = "vector") {
 }
 
 export function applyFilter(params, path = "vector") {
-  console.log(path);
+  console.log(path, params);
   return rp({
     uri: `${global.apiBaseUrl}/${
       path !== "vector" ? "water" : "vector"
@@ -241,14 +244,28 @@ export function applyFilter(params, path = "vector") {
   });
 }
 
-export function getDashBoardData() {
+export function getDashBoardData(path) {
+  console.log(
+    `${global.apiBaseUrl}/${
+      path !== "vector" ? "water" : "vector"
+    }/getDashBoardData`
+  );
   return rp({
-    uri: `${global.apiBaseUrl}/vector/getDashBoardData`,
+    uri: `${global.apiBaseUrl}/${
+      path !== "vector" ? "water" : "vector"
+    }/getDashBoardData`,
     json: true
   });
 }
 
 export function getEntry(id, path = "vector", recordType) {
+  console.log(
+    `${global.apiBaseUrl}/${
+      path !== "vector" ? "water" : "vector"
+    }?id=${id}&recordType=${recordType}&userId=${localStorage.getItem(
+      "userId"
+    )}`
+  );
   return rp({
     uri: `${global.apiBaseUrl}/${
       path !== "vector" ? "water" : "vector"

@@ -101,7 +101,7 @@ const useStyles = makeStyles(styles);
 export default function Dashboard() {
   const [initData, setInitData] = React.useState("");
   useEffect(() => {
-    Http.getDashBoardData().then(res => {
+    Http.getDashBoardData(localStorage.getItem("appName")).then(res => {
       setInitData(res);
     });
   }, []);
@@ -175,13 +175,16 @@ export default function Dashboard() {
   };
   const handleSubmit = () => {
     const payload = {
-      district,
-      hud,
-      block,
-      village,
-      habitation,
-      placeType,
-      dateOfInspection
+      type: "survey",
+      body: {
+        district,
+        hud,
+        block,
+        village,
+        habitation,
+        placeType,
+        dateOfInspection
+      }
     };
     Http.applyFilter(payload).then(resp => {
       setData(resp || []);
@@ -222,10 +225,24 @@ export default function Dashboard() {
               <CardIcon color="warning">
                 <Icon>content_copy</Icon>
               </CardIcon>
-              <p className={classes.cardCategory}>Today</p>
-              <h3 className={classes.cardTitle}>
-                {initData.today.length} <small>Entries</small>
-              </h3>
+              {localStorage.getItem("appName") === "vector" ? (
+                <div>
+                  <p className={classes.cardCategory}>Today</p>
+                  <h3 className={classes.cardTitle}>
+                    {initData.todaySurvey.length} <small>Entries</small>
+                  </h3>
+                  <h3 className={classes.cardTitle}>
+                    {initData.todayAction.length} <small>Action(s) Taken</small>
+                  </h3>
+                </div>
+              ) : (
+                <div>
+                  <p className={classes.cardCategory}>Today</p>
+                  <h3 className={classes.cardTitle}>
+                    {initData.today.length} <small>Entries</small>
+                  </h3>
+                </div>
+              )}
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>
@@ -241,10 +258,24 @@ export default function Dashboard() {
               <CardIcon color="success">
                 <Store />
               </CardIcon>
-              <p className={classes.cardCategory}>This Month</p>
-              <h3 className={classes.cardTitle}>
-                {initData.thisMonth.length} Entries
-              </h3>
+              {localStorage.getItem("appName") === "vector" ? (
+                <div>
+                  <p className={classes.cardCategory}>This Month</p>
+                  <h3 className={classes.cardTitle}>
+                    {initData.thisMonthSurvey.length} Entries
+                  </h3>
+                  <h3 className={classes.cardTitle}>
+                    {initData.thisMonthAction.length} Action(s) Taken
+                  </h3>
+                </div>
+              ) : (
+                <div>
+                  <p className={classes.cardCategory}>This Month</p>
+                  <h3 className={classes.cardTitle}>
+                    {initData.thisMonth.length} Entries
+                  </h3>
+                </div>
+              )}
             </CardHeader>
             <CardFooter stats>
               <div className={classes.stats}>

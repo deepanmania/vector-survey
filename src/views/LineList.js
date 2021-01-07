@@ -46,7 +46,17 @@ const keyMapper = {
   village: "Village",
   habitation: "Habitation",
   district: "District",
-  block: "Block"
+  block: "Block",
+  infiltrationgallery: "Infiltration Gallery",
+  infiltrationwell: "Infiltration Well",
+  openwell: "Open Well",
+  borewell: "Bore Well",
+  collectionsump: "Collection Sump",
+  pumpingstation: "Pumping Station",
+  overheadtank: "Over Head Tank / HDPE Tanks",
+  roplant: "RO Plant",
+  tapfirst: "Distribution Pipeline Tap First",
+  tapmiddle: "Distribution Pipeline Tap Middle"
 };
 
 const formStyles = {
@@ -92,7 +102,7 @@ export default function LineList(props) {
   const [dateOfInspection, setDateOfInspection] = React.useState(new Date());
   const [hud, setHud] = React.useState(0);
   const [placeType, setPlaceType] = React.useState("");
-  const [recordType, setRecordType] = React.useState("");
+  const [recordType, setRecordType] = React.useState("survey");
   const [block, setBlock] = React.useState(0);
 
   const [village, setVillage] = React.useState(0);
@@ -112,7 +122,9 @@ export default function LineList(props) {
   };
 
   const handleClick = id => {
+    console.log(id);
     Http.getEntry(id, localStorage.getItem("appName"), recordType).then(res => {
+      console.log("***", res);
       props.history.push({
         pathname:
           localStorage.getItem("appName") === "vector"
@@ -139,10 +151,10 @@ export default function LineList(props) {
     console.log(localStorage.getItem("appName"));
     Http.applyFilter(payload, localStorage.getItem("appName")).then(resp => {
       resp = resp.map(i => {
-        delete i.defaultImage;
-        i.dateOfInspection = moment(i.dateOfInspection, moment.ISO_8601).format(
-          "DD/MM/YYYY"
-        );
+        i.dateOfInspection = moment(
+          i.entry.dateOfInspection,
+          moment.ISO_8601
+        ).format("DD/MM/YYYY");
         return i;
       });
       setData(resp);
@@ -222,11 +234,9 @@ export default function LineList(props) {
     Http.getResponse("districts", 33).then(res => {
       setDistricts(res);
       Http.getLineListData(localStorage.getItem("appName")).then(resp => {
-        console.log("!!!!", resp);
         resp = resp.map(i => {
-          delete i.defaultImage;
-          i.dateOfInspection = moment(
-            i.dateOfInspection,
+          i.entry.dateOfInspection = moment(
+            i.entry.dateOfInspection,
             moment.ISO_8601
           ).format("DD/MM/YYYY");
           return i;
@@ -518,15 +528,19 @@ export default function LineList(props) {
                   tableHeaderColor="warning"
                   tableHead={[
                     "S.No",
-                    ...Object.keys(data[0]).filter(i => i !== "id"),
+                    ...Object.keys(data[0].entry),
                     ...[""]
-                  ].map(i => keyMapper[i])}
+                  ].map(i => keyMapper[i] || i)}
                   tableData={data.map((i, idx) => {
                     const id = i.id;
-                    delete i.id;
                     return [
                       idx + 1,
-                      ...Object.values(i),
+                      ...Object.values(i.entry).map(i => {
+                        if (typeof i === "object") {
+                          return i.name;
+                        }
+                        return i;
+                      }),
                       <div key={idx} onClick={handleClick.bind(null, id)}>
                         <Icon key={idx}>create</Icon>
                       </div>

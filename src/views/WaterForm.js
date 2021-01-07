@@ -24,6 +24,9 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Icon from "@material-ui/core/Icon";
+import Snackbar from "components/Snackbar/Snackbar.js";
+import AddAlert from "@material-ui/icons/AddAlert";
+
 // tabs
 // import PropTypes from "prop-types";
 
@@ -141,30 +144,39 @@ export default function FillForm(props) {
   const [villages, setVillages] = React.useState([]);
   const [habitations, setHabitations] = React.useState([]);
   const [streets, setStreets] = React.useState([]);
-
+  const [messageInfo, setmessageInfo] = React.useState("");
+  const [showInfo, setshowInfo] = React.useState(false);
+  const [infocolor, setinfocolor] = React.useState("success");
   const formValue = Object.assign({}, stateProps);
+  formValue.entry = formValue.entry || {};
+  formValue.labentry = formValue.labentry || {};
   useEffect(() => {
     (async () => {
+      console.log(stateProps);
       if (stateProps.id) {
         await Http.getResponse("districts", 33).then(res => {
           setDistricts(res);
         });
-        await Http.getResponse("hud", formValue.district).then(res => {
+        await Http.getResponse("hud", formValue.entry.district).then(res => {
           setHuds(res);
         });
-        await Http.getResponse("block", formValue.hud).then(res => {
+        await Http.getResponse("block", formValue.entry.hud).then(res => {
           setBlocks(res);
         });
-        await Http.getResponse("village", formValue.block).then(res => {
+        await Http.getResponse("village", formValue.entry.block).then(res => {
           setVillages(res);
         });
-        await Http.getResponse("habitation", formValue.village).then(res => {
-          setHabitations(res);
-        });
-        await Http.getResponse("street", formValue.habitation).then(res => {
-          setLoaded(true);
-          setStreets(res);
-        });
+        await Http.getResponse("habitation", formValue.entry.village).then(
+          res => {
+            setHabitations(res);
+          }
+        );
+        await Http.getResponse("street", formValue.entry.habitation).then(
+          res => {
+            setLoaded(true);
+            setStreets(res);
+          }
+        );
       } else {
         Http.getResponse("districts", 33).then(res => {
           setDistricts(res);
@@ -172,161 +184,179 @@ export default function FillForm(props) {
       }
     })();
   }, []);
-  const [district, setDistrict] = React.useState(formValue.district || 0);
-  const [hud, setHud] = React.useState(formValue.hud || 0);
+  const [district, setDistrict] = React.useState(formValue.entry.district || 0);
+  const [hud, setHud] = React.useState(formValue.entry.hud || 0);
 
-  const [block, setBlock] = React.useState(formValue.block || 0);
+  const [block, setBlock] = React.useState(formValue.entry.block || 0);
 
-  const [village, setVillage] = React.useState(formValue.village || 0);
+  const [village, setVillage] = React.useState(formValue.entry.village || 0);
 
-  const [habitation, setHabitation] = React.useState(formValue.habitation || 0);
+  const [habitation, setHabitation] = React.useState(
+    formValue.entry.habitation || 0
+  );
 
-  const [street, setStreet] = React.useState(formValue.street || 0);
+  const [street, setStreet] = React.useState(formValue.entry.street || 0);
 
-  const [infiltrationgalleryName, setinfiltrationgalleryName] = React.useState(
-    formValue.infiltrationgalleryName || ""
+  const [infiltrationgallery, setinfiltrationgallery] = React.useState(
+    formValue.entry.infiltrationgallery || ""
   );
-  const [infiltrationwellName, setinfiltrationwellName] = React.useState(
-    formValue.infiltrationwellName || ""
+  const [infiltrationwell, setinfiltrationwell] = React.useState(
+    formValue.entry.infiltrationwell || ""
   );
-  const [openwellName, setopenwellName] = React.useState(
-    formValue.openwellName || ""
+  const [openwell, setopenwell] = React.useState(
+    formValue.entry.openwell || ""
   );
-  const [borewellName, setborewellName] = React.useState(
-    formValue.borewellName || ""
+  const [borewell, setborewell] = React.useState(
+    formValue.entry.borewell || ""
   );
-  const [collectionsumpName, setcollectionsumpName] = React.useState(
-    formValue.collectionsumpName || ""
+  const [collectionsump, setcollectionsump] = React.useState(
+    formValue.entry.collectionsump || ""
   );
-  const [pumpingstationName, setpumpingstationName] = React.useState(
-    formValue.pumpingstationName || ""
+  const [pumpingstation, setpumpingstation] = React.useState(
+    formValue.entry.pumpingstation || ""
   );
-  const [overheadtankName, setoverheadtankName] = React.useState(
-    formValue.overheadtankName || ""
+  const [overheadtank, setoverheadtank] = React.useState(
+    formValue.entry.overheadtank || ""
   );
-  const [roplantName, setroplantName] = React.useState(
-    formValue.roplantName || ""
+  const [roplant, setroplant] = React.useState(formValue.entry.roplant || "");
+  const [tapfirst, settapfirst] = React.useState(
+    formValue.entry.tapfirst || ""
   );
-  const [tapfirstName, settapfirstName] = React.useState(
-    formValue.tapfirstName || ""
+  const [tapmiddle, settapmiddle] = React.useState(
+    formValue.entry.tapmiddle || ""
   );
-  const [tapmiddleName, settapmiddleName] = React.useState(
-    formValue.tapmiddleName || ""
-  );
-  const [taplastName, settaplastName] = React.useState(
-    formValue.taplastName || ""
-  );
+  const [taplast, settaplast] = React.useState(formValue.entry.taplast || "");
 
   const [sampleReceivedDate, setSampleReceivedDate] = React.useState(
-    formValue.sampleReceivedDate || new Date()
+    formValue.labentry.sampleReceivedDate || new Date()
   );
 
   const [sampleTestedDate, setSampleTestedDate] = React.useState(
-    formValue.sampleTestedDate || new Date()
+    formValue.labentry.sampleTestedDate || new Date()
   );
 
-  const [testType, setTestType] = React.useState(formValue.testType || "");
+  const [testType, setTestType] = React.useState(
+    formValue.labentry.testType || ""
+  );
   const [reportingDate, setReportingDate] = React.useState(
-    formValue.reportingDate || new Date()
+    formValue.labentry.reportingDate || new Date()
   );
-  const [color, setColor] = React.useState(formValue.color || "");
-  const [turbidity, setTurbidity] = React.useState(formValue.turbidity || 0);
-  const [odour, setOdour] = React.useState(formValue.odour || "");
+  const [color, setColor] = React.useState(formValue.labentry.color || "");
+  const [turbidity, setTurbidity] = React.useState(
+    formValue.labentry.turbidity || 0
+  );
+  const [odour, setOdour] = React.useState(formValue.labentry.odour || "");
   const [totalDissolvedSolids, setTotalDissolvedSolids] = React.useState(
-    formValue.totalDissolvedSolids || 0
+    formValue.labentry.totalDissolvedSolids || 0
   );
-  const [hardness, setHardness] = React.useState(formValue.hardness || "");
+  const [hardness, setHardness] = React.useState(
+    formValue.labentry.hardness || ""
+  );
   const [carbonateHardness, setCarbonateHardness] = React.useState(
-    formValue.carbonateHardness || 0
+    formValue.labentry.carbonateHardness || 0
   );
   const [nonCarbonateHardness, setNonCarbonateHardness] = React.useState(
-    formValue.nonCarbonateHardness || 0
+    formValue.labentry.nonCarbonateHardness || 0
   );
   const [totalHardness, setTotalHardness] = React.useState(
-    formValue.totalHardness || 0
+    formValue.labentry.totalHardness || 0
   );
   const [chlorideAsChlorine, setChlorideAsChlorine] = React.useState(
-    formValue.chlorideAsChlorine || 0
+    formValue.labentry.chlorideAsChlorine || 0
   );
   const [ammonicalNitrogen, setAmmonicalNitrogen] = React.useState(
-    formValue.ammonicalNitrogen || ""
+    formValue.labentry.ammonicalNitrogen || ""
   );
   const [oxygenAbsorption, setOxygenAbsorption] = React.useState(
-    formValue.oxygenAbsorption || 0
+    formValue.labentry.oxygenAbsorption || 0
   );
-  const [nitrate, setNitrate] = React.useState(formValue.nitrate || 0);
+  const [nitrate, setNitrate] = React.useState(formValue.labentry.nitrate || 0);
   const [phenophthalein, setPhenophthalein] = React.useState(
-    formValue.phenophthalein || 0
+    formValue.labentry.phenophthalein || 0
   );
   const [methylOrange, setMethylOrange] = React.useState(
-    formValue.methylOrange || 0
+    formValue.labentry.methylOrange || 0
   );
-  const [fluoride, setFluoride] = React.useState(formValue.fluoride || 0);
-  const [ph, setPh] = React.useState(formValue.ph || 0);
-  const [totalIron, setTotalIron] = React.useState(formValue.totalIron || 0);
-  const [nitrite, setNitrite] = React.useState(formValue.nitrite || "");
-  const [sulphate, setSulphate] = React.useState(formValue.sulphate || "");
-  const [phosphate, setPhosPhate] = React.useState(formValue.phosphate || "");
+  const [fluoride, setFluoride] = React.useState(
+    formValue.labentry.fluoride || 0
+  );
+  const [ph, setPh] = React.useState(formValue.labentry.ph || 0);
+  const [totalIron, setTotalIron] = React.useState(
+    formValue.labentry.totalIron || 0
+  );
+  const [nitrite, setNitrite] = React.useState(
+    formValue.labentry.nitrite || ""
+  );
+  const [sulphate, setSulphate] = React.useState(
+    formValue.labentry.sulphate || ""
+  );
+  const [phosphate, setPhosPhate] = React.useState(
+    formValue.labentry.phosphate || ""
+  );
   const [electricalConductivity, setElectricalConductivity] = React.useState(
-    formValue.electricalConductivity || 0
+    formValue.labentry.electricalConductivity || 0
   );
   const [totalColonyCount, setTotalColonyCount] = React.useState(
-    formValue.totalColonyCount || 0
+    formValue.labentry.totalColonyCount || 0
   );
-  const [mpn, setMpn] = React.useState(formValue.mpn || 0);
+  const [mpn, setMpn] = React.useState(formValue.labentry.mpn || 0);
   // const [rapidEcoliTests, setRapidEcoliTests] = React.useState(
-  //   formValue.rapidEcoliTests || ""
+  //   formValue.labentry.rapidEcoliTests || ""
   // );
   const [brilliantGreenTest, setBrilliantGreenTest] = React.useState(
-    formValue.brilliantGreenTest || ""
+    formValue.labentry.brilliantGreenTest || ""
   );
   const [indoleTest, setIndoleTest] = React.useState(
-    formValue.indoleTest || ""
+    formValue.labentry.indoleTest || ""
   );
-  const [citrate, setCitrate] = React.useState(formValue.citrate || "");
-  const [triptone, setTriptone] = React.useState(formValue.triptone || "");
+  const [citrate, setCitrate] = React.useState(
+    formValue.labentry.citrate || ""
+  );
+  const [triptone, setTriptone] = React.useState(
+    formValue.labentry.triptone || ""
+  );
   const [
     glucosePhosphateMethylRed,
     setGlucosePhosphateMethylRed
-  ] = React.useState(formValue.glucosePhosphateMethylRed || "");
+  ] = React.useState(formValue.labentry.glucosePhosphateMethylRed || "");
   const [singleBroth, setSingleBroth] = React.useState(
-    formValue.singleBroth || ""
+    formValue.labentry.singleBroth || ""
   );
   const [vibrioCholerae, setVibrioCholerae] = React.useState(
-    formValue.singleBroth || ""
+    formValue.labentry.singleBroth || ""
   );
   const [fecalStreptococci, setFecalStreptococci] = React.useState(
-    formValue.fecalStreptococci || ""
+    formValue.labentry.fecalStreptococci || ""
   );
   const [
     clostridiumPerfereingenes,
     setClostridiumPerfereingenes
-  ] = React.useState(formValue.clostridiumPerfereingenes || "");
+  ] = React.useState(formValue.labentry.clostridiumPerfereingenes || "");
   const [salmonellaAndShigella, setSalmonellaAndShigella] = React.useState(
-    formValue.salmonellaAndShigella || ""
+    formValue.labentry.salmonellaAndShigella || ""
   );
   const [pseudomonas, setPseudomonas] = React.useState(
-    formValue.pseudomonas || ""
+    formValue.labentry.pseudomonas || ""
   );
   const [staphylococcus, setStaphylococcus] = React.useState(
-    formValue.staphylococcus || ""
+    formValue.labentry.staphylococcus || ""
   );
   const [yeastAndMould, setYeastAndMould] = React.useState(
-    formValue.yeastAndMould || ""
+    formValue.labentry.yeastAndMould || ""
   );
   const [lipolyticBacterialCount, setLipolyticBacterialCount] = React.useState(
-    formValue.lipolyticBacterialCount || ""
+    formValue.labentry.lipolyticBacterialCount || ""
   );
   const [
     proteolyticBacterialCount,
     setProteolyticBacterialCount
-  ] = React.useState(formValue.proteolyticBacterialCount || "");
+  ] = React.useState(formValue.labentry.proteolyticBacterialCount || "");
   const [
     thermophilicBacterialCount,
     setThermophilicBacterialCount
-  ] = React.useState(formValue.thermophilicBacterialCount || "");
+  ] = React.useState(formValue.labentry.thermophilicBacterialCount || "");
   const [microscopicalExam, setMicroscopicalExam] = React.useState(
-    formValue.microscopicalExam || ""
+    formValue.labentry.microscopicalExam || ""
   );
   const classes = useStyles();
   // const [states, setStates] = React.useState("");
@@ -334,101 +364,142 @@ export default function FillForm(props) {
   // const [districts, setDistricts] = React.useState("");
   // const [district, setDistrict] = React.useState("");
   // const [country, setCountry] = React.useState("");
-  const [placeType, setPlaceType] = React.useState("");
+  const [placeType, setPlaceType] = React.useState(
+    formValue.entry.placeType || ""
+  );
 
   const [samplesTaken, setSamplesTaken] = React.useState(
-    formValue.samplesTaken || 0
+    formValue.entry.samplesTaken || 0
   );
-  const [dateOfInspection, setDateOfInspection] = React.useState(new Date());
+  const [dateOfInspection, setDateOfInspection] = React.useState(
+    formValue.entry.dateOfInspection || new Date()
+  );
   const [nameOfPlace, setNameOfPlace] = React.useState(
-    formValue.nameOfPlace || ""
+    formValue.entry.nameOfPlace || ""
   );
   const { latitude, longitude } = usePosition(true);
   const handleSubmit = async (op = "insert", id) => {
-    const payload = {
-      district,
-      hud,
-      block,
-      village,
-      habitation,
-      placeType,
-      dateOfInspection,
-      nameOfPlace,
-      infiltrationgalleryName,
-      infiltrationwellName,
-      openwellName,
-      borewellName,
-      collectionsumpName,
-      pumpingstationName,
-      overheadtankName,
-      roplantName,
-      tapfirstName,
-      tapmiddleName,
-      taplastName,
-      samplesTaken
+    const wait = (timeout = 2000) => {
+      return new Promise(resolve => setTimeout(() => resolve, timeout));
     };
-    await Http.submitWaterFormData(payload, op, id).then(() => {
-      if (localStorage.getItem("appName") === "water-lab") {
-        const labPayload = {
-          sampleReceivedDate,
-          sampleTestedDate,
-          testType,
-          reportingDate,
-          color,
-          turbidity,
-          odour,
-          totalDissolvedSolids,
-          hardness,
-          carbonateHardness,
-          nonCarbonateHardness,
-          totalHardness,
-          chlorideAsChlorine,
-          ammonicalNitrogen,
-          oxygenAbsorption,
-          nitrate,
-          phenophthalein,
-          methylOrange,
-          fluoride,
-          ph,
-          totalIron,
-          nitrite,
-          sulphate,
-          phosphate,
-          electricalConductivity,
-          totalColonyCount,
-          mpn,
-          brilliantGreenTest,
-          indoleTest,
-          citrate,
-          triptone,
-          glucosePhosphateMethylRed,
-          singleBroth,
-          vibrioCholerae,
-          fecalStreptococci,
-          clostridiumPerfereingenes,
-          salmonellaAndShigella,
-          pseudomonas,
-          staphylococcus,
-          yeastAndMould,
-          lipolyticBacterialCount,
-          proteolyticBacterialCount,
-          thermophilicBacterialCount,
-          microscopicalExam
-        };
-        return Http.submitWaterLabFormData(labPayload, id);
+    if (!district || !block || !nameOfPlace) {
+      setmessageInfo(
+        "District, Block and Name of the place are required to save the entry"
+      );
+      setinfocolor("danger");
+      setshowInfo(true);
+      await wait();
+      setshowInfo(false);
+      setinfocolor("info");
+    }
+    const payload = {
+      userId: localStorage.getItem("userId"),
+      body: {
+        district,
+        hud,
+        block,
+        village,
+        habitation,
+        placeType,
+        street,
+        dateOfInspection,
+        nameOfPlace,
+        infiltrationgallery,
+        infiltrationwell,
+        openwell,
+        borewell,
+        collectionsump,
+        pumpingstation,
+        overheadtank,
+        roplant,
+        tapfirst,
+        tapmiddle,
+        taplast,
+        samplesTaken
       }
-    });
+    };
+    setmessageInfo("Saving");
+    setshowInfo(true);
+    await Http.submitWaterFormData(payload, op, id)
+      .then(() => {
+        if (localStorage.getItem("appName") === "water-lab") {
+          const labPayload = {
+            userId: localStorage.getItem("userId"),
+            body: {
+              sampleReceivedDate,
+              sampleTestedDate,
+              testType,
+              reportingDate,
+              color,
+              turbidity,
+              odour,
+              totalDissolvedSolids,
+              hardness,
+              carbonateHardness,
+              nonCarbonateHardness,
+              totalHardness,
+              chlorideAsChlorine,
+              ammonicalNitrogen,
+              oxygenAbsorption,
+              nitrate,
+              phenophthalein,
+              methylOrange,
+              fluoride,
+              ph,
+              totalIron,
+              nitrite,
+              sulphate,
+              phosphate,
+              electricalConductivity,
+              totalColonyCount,
+              mpn,
+              brilliantGreenTest,
+              indoleTest,
+              citrate,
+              triptone,
+              glucosePhosphateMethylRed,
+              singleBroth,
+              vibrioCholerae,
+              fecalStreptococci,
+              clostridiumPerfereingenes,
+              salmonellaAndShigella,
+              pseudomonas,
+              staphylococcus,
+              yeastAndMould,
+              lipolyticBacterialCount,
+              proteolyticBacterialCount,
+              thermophilicBacterialCount,
+              microscopicalExam
+            }
+          };
+          return Http.submitWaterLabFormData(labPayload, id);
+        }
+      })
+      .then(() => {
+        setshowInfo(false);
+        props.history.push({
+          pathname: "lineList"
+        });
+      });
   };
 
   const handleDateChange = date => {
     setDateOfInspection(date);
   };
 
-  const status = ["positive", "negative"];
+  const status = ["positive", "negative", "not done"];
 
   const setWaterParamState = (varName, event) => {
+    let count = 0;
+    waterSampleParams.forEach(param => {
+      if (eval(param.val)) {
+        count++;
+      }
+      setSamplesTaken(count);
+    });
     const targetVal = (event.target || {}).value;
     eval("set" + varName)(targetVal);
+    setHardness(Number(carbonateHardness) + Number(nonCarbonateHardness));
   };
 
   const handleChange = (fn, event) => {
@@ -495,7 +566,7 @@ export default function FillForm(props) {
   )) ? (
     <div>
       <MuiThemeProvider>
-        <Header title="New Entry" />
+        <Header title="Water Entry" />
       </MuiThemeProvider>
       <GridContainer container={true}>
         <GridItem xs={12} sm={12} md={12} className={classes.padContainer}>
@@ -674,7 +745,9 @@ export default function FillForm(props) {
                         "Government Homes",
                         "Railway Stations",
                         "Prisons",
-                        "Government Institutions"
+                        "Government Institutions",
+                        "Private",
+                        "Others"
                       ].map((i, idx) => (
                         <MenuItem value={i} key={idx}>
                           {i}
@@ -690,7 +763,7 @@ export default function FillForm(props) {
                       className={classes.formControl}
                       margin="normal"
                       id="date-picker-dialog"
-                      label="Date of Inspection"
+                      label="Date of Sample Taken"
                       format="MM/dd/yyyy"
                       value={dateOfInspection}
                       onChange={handleDateChange}
@@ -753,10 +826,10 @@ export default function FillForm(props) {
                                   fullWidth: true
                                 }}
                                 inputProps={{
-                                  value: eval(param.val + "Name"),
+                                  value: eval(param.val),
                                   onChange: setWaterParamState.bind(
                                     null,
-                                    `${param.val}Name`
+                                    `${param.val}`
                                   )
                                 }}
                               />
@@ -894,7 +967,7 @@ export default function FillForm(props) {
                           className={classes.formControl}
                           margin="normal"
                           id="date-picker-dialog"
-                          label="Date of Reporting"
+                          label="Date of Confirmation"
                           format="MM/dd/yyyy"
                           value={reportingDate}
                           onChange={setWaterParamState.bind(
@@ -918,9 +991,6 @@ export default function FillForm(props) {
                           value={color}
                           onChange={setWaterParamState.bind(null, "Color")}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {(colourArr || []).map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -954,9 +1024,6 @@ export default function FillForm(props) {
                           value={odour}
                           onChange={setWaterParamState.bind(null, "Odour")}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {(odourArr || []).map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1094,9 +1161,6 @@ export default function FillForm(props) {
                             "AmmonicalNitrogen"
                           )}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {(ammonicalNitrogenArr || []).map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1227,9 +1291,6 @@ export default function FillForm(props) {
                           value={nitrite}
                           onChange={setWaterParamState.bind(null, "Nitrite")}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {(nitriteArr || []).map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1249,9 +1310,6 @@ export default function FillForm(props) {
                           value={sulphate}
                           onChange={setWaterParamState.bind(null, "Sulphate")}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {(sulphateArr || []).map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1273,9 +1331,6 @@ export default function FillForm(props) {
                           value={phosphate}
                           onChange={setWaterParamState.bind(null, "Phosphate")}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {(phosphateArr || []).map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1361,9 +1416,6 @@ export default function FillForm(props) {
                             "BrilliantGreenTest"
                           )}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1382,9 +1434,6 @@ export default function FillForm(props) {
                           value={indoleTest}
                           onChange={setWaterParamState.bind(null, "IndoleTest")}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1409,9 +1458,6 @@ export default function FillForm(props) {
                           value={citrate}
                           onChange={setWaterParamState.bind(null, "Citrate")}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1430,9 +1476,6 @@ export default function FillForm(props) {
                           value={triptone}
                           onChange={setWaterParamState.bind(null, "Triptone")}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1454,9 +1497,6 @@ export default function FillForm(props) {
                             "GlucosePhosphateMethylRed"
                           )}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1478,9 +1518,6 @@ export default function FillForm(props) {
                             "SingleBroth"
                           )}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1505,9 +1542,6 @@ export default function FillForm(props) {
                             "VibrioCholerae"
                           )}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1529,9 +1563,6 @@ export default function FillForm(props) {
                             "FecalStreptococci"
                           )}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1553,9 +1584,6 @@ export default function FillForm(props) {
                             "ClostridiumPerfereingenes"
                           )}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1577,9 +1605,6 @@ export default function FillForm(props) {
                             "SalmonellaAndShigella"
                           )}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1603,9 +1628,6 @@ export default function FillForm(props) {
                             "Pseudomonas"
                           )}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1627,9 +1649,6 @@ export default function FillForm(props) {
                             "Staphylococcus"
                           )}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1651,9 +1670,6 @@ export default function FillForm(props) {
                             "YeastAndMould"
                           )}
                         >
-                          <MenuItem value="">
-                            <em>None</em>
-                          </MenuItem>
                           {status.map((i, idx) => (
                             <MenuItem value={i} key={idx}>
                               {i}
@@ -1761,6 +1777,15 @@ export default function FillForm(props) {
           </Button>
         </CardFooter>
       </GridContainer>
+      <Snackbar
+        place="tr"
+        color={infocolor}
+        icon={AddAlert}
+        message={messageInfo}
+        open={showInfo}
+        closeNotification={() => setshowInfo(false)}
+        close
+      />
     </div>
   ) : (
     <div>Loading...</div>

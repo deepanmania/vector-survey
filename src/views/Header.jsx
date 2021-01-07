@@ -196,19 +196,25 @@ export default function Header(props) {
                 : "Water Survey",
             icon: ""
           },
-          {
-            route:
-              localStorage.getItem("appName") === "vector"
-                ? "/vector-action"
-                : "/water-action",
-            title: "Action Taken",
-            icon: ""
-          }
+          ...(localStorage.getItem("appName") === "vector"
+            ? [
+                {
+                  route: "/vector-action",
+                  title: "Action Taken",
+                  icon: ""
+                }
+              ]
+            : [])
         ]
       : []),
     {
       route: "linelist",
       title: "Line List",
+      icon: ""
+    },
+    {
+      route: "logout",
+      title: "Logout",
       icon: ""
     }
   ];

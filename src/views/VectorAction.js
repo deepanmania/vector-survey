@@ -23,6 +23,8 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Snackbar from "components/Snackbar/Snackbar.js";
+import AddAlert from "@material-ui/icons/AddAlert";
 // tabs
 import PropTypes from "prop-types";
 
@@ -106,6 +108,8 @@ export default function FillForm(props) {
   const [villages, setVillages] = React.useState([]);
   const [habitations, setHabitations] = React.useState([]);
   const [streets, setStreets] = React.useState([]);
+  const [messageInfo, setmessageInfo] = React.useState("");
+  const [showInfo, setshowInfo] = React.useState(false);
 
   const formValue = Object.assign({}, stateProps);
   useEffect(() => {
@@ -184,10 +188,6 @@ export default function FillForm(props) {
   const [dateOfInspection, setDateOfInspection] = React.useState(new Date());
   const { latitude, longitude } = usePosition(true);
   const webcamRef = React.useRef(null);
-  const [defaultImage, setDefaultImage] = React.useState(
-    formValue.defaultImage ||
-      "data:image/jpeg;base64,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"
-  );
   const handleSubmit = async (op = "insert", id) => {
     const payload = {
       formType: "action",
@@ -200,7 +200,6 @@ export default function FillForm(props) {
         habitation,
         placeType,
         dateOfInspection,
-        defaultImage,
         visitReason,
         dateOfWork,
         workersEngaged,
@@ -211,19 +210,15 @@ export default function FillForm(props) {
         dateOfFogging
       }
     };
-    await Http.submitVectorFormData(payload, op, id);
+    setmessageInfo("Saving");
+    setshowInfo(true);
+    await Http.submitVectorFormData(payload, op, id).then(() => {
+      setshowInfo(false);
+      props.history.push({
+        pathname: "lineList"
+      });
+    });
   };
-
-  const capture = React.useCallback(() => {
-    const imageSrc = webcamRef.current.getScreenshot();
-    setDefaultImage(imageSrc);
-    setWebcamEnabled(false);
-  }, [webcamRef]);
-
-  const enableCamera = () => {
-    setWebcamEnabled(true);
-  };
-
   const handleDateChange = date => {
     setDateOfInspection(date);
   };
@@ -298,7 +293,7 @@ export default function FillForm(props) {
   )) ? (
     <div>
       <MuiThemeProvider>
-        <Header title="New Entry" />
+        <Header title="Vector Action" />
       </MuiThemeProvider>
       <GridContainer container={true}>
         <GridItem xs={12} sm={12} md={12} className={classes.padContainer}>
@@ -522,7 +517,7 @@ export default function FillForm(props) {
                       className={classes.formControl}
                       margin="normal"
                       id="date-picker-dialog"
-                      label="Date of Inspection"
+                      label="Date of Sample Taken"
                       format="MM/dd/yyyy"
                       value={dateOfInspection}
                       onChange={handleDateChange}
@@ -544,52 +539,6 @@ export default function FillForm(props) {
                     }}
                   />
                 </GridItem> */}
-              </GridContainer>
-              <GridContainer>
-                <GridItem xs={12} sm={12} md={12}>
-                  {webcamEnabled ? (
-                    <div>
-                      <Webcam
-                        style={{ marginLeft: "46%" }}
-                        audio={false}
-                        height={300}
-                        ref={webcamRef}
-                        screenshotFormat="image/jpeg"
-                        width={200}
-                        mirrored={true}
-                        videoConstraints={videoConstraints}
-                        // value={image}
-                      />
-                      <button
-                        onClick={capture}
-                        // style={{
-                        //   marginLeft: "-9%"
-                        // }}
-                      >
-                        Capture photo
-                      </button>
-                    </div>
-                  ) : (
-                    <div>
-                      <img
-                        src={defaultImage}
-                        height={200}
-                        width={200}
-                        style={{
-                          marginLeft: "46%"
-                        }}
-                      />
-                      <button
-                        onClick={enableCamera}
-                        style={{
-                          marginLeft: "-8%"
-                        }}
-                      >
-                        Take Photo
-                      </button>
-                    </div>
-                  )}
-                </GridItem>
               </GridContainer>
             </CardBody>
           </Card>
@@ -738,6 +687,15 @@ export default function FillForm(props) {
           </Button>
         </CardFooter>
       </GridContainer>
+      <Snackbar
+        place="tr"
+        color="success"
+        icon={AddAlert}
+        message={messageInfo}
+        open={showInfo}
+        closeNotification={() => setshowInfo(false)}
+        close
+      />
     </div>
   ) : (
     <div>Loading...</div>

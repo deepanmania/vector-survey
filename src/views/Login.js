@@ -21,6 +21,12 @@ class Login extends Component {
     };
   }
 
+  handleKeyPress(target) {
+    if (target.charCode == 13) {
+      document.getElementById("submit").click();
+    }
+  }
+
   handleClick(event) {
     const payload = {
       userName: this.state.username,
@@ -39,11 +45,39 @@ class Login extends Component {
             this.setState({ tl: false });
           }, 2000);
         }
+      } else {
+        localStorage.setItem("userId", res.id);
+        localStorage.setItem("userName", res.username);
+        localStorage.setItem("role", res.role);
+        switch (res.role) {
+          case "water-field-entry":
+            localStorage.setItem("appName", "water-entry");
+            pathname = "/dashboard";
+            break;
+          case "vector-field-entry":
+            localStorage.setItem("appName", "vector");
+            pathname = "/dashboard";
+            break;
+          case "water-lab":
+            localStorage.setItem("appName", "water-lab");
+            pathname = "/linelist";
+            break;
+        }
+        const state = Object.assign(payload, { role: res.role });
+        console.log(pathname, state, localStorage.getItem("appName"));
+        this.props.history.push({
+          pathname,
+          state
+        });
       }
-      localStorage.setItem("userId", res.id);
-      localStorage.setItem("userName", res.username);
-      localStorage.setItem("role", res.role);
-      switch (res.role) {
+    });
+  }
+
+  render() {
+    const role = localStorage.getItem("role");
+    if (role) {
+      let pathname;
+      switch (role) {
         case "water-field-entry":
           localStorage.setItem("appName", "water-entry");
           pathname = "/dashboard";
@@ -57,62 +91,60 @@ class Login extends Component {
           pathname = "/linelist";
           break;
       }
-      const state = Object.assign(payload, { role: res.role });
-      console.log(pathname, state, localStorage.getItem("appName"));
-      this.props.history.push({
-        pathname,
-        state
-      });
-    });
-  }
-
-  render() {
-    return (
-      <div
-        style={{
-          "text-align": "center"
-        }}
-      >
-        <MuiThemeProvider>
-          <div>
-            {/* <Header title="Login" /> */}
-            <AppBar title="Login" />
-            <TextField
-              hintText="Enter your Username"
-              floatingLabelText="Username"
-              onChange={(event, newValue) =>
-                this.setState({ username: newValue })
-              }
-            />
-            <br />
-            <TextField
-              type="password"
-              hintText="Enter your Password"
-              floatingLabelText="Password"
-              onChange={(event, newValue) =>
-                this.setState({ password: newValue })
-              }
-            />
-            <br />
-            <RaisedButton
-              label="Submit"
-              primary={true}
-              style={style}
-              onClick={event => this.handleClick(event)}
-            />
-          </div>
-        </MuiThemeProvider>
-        <Snackbar
-          place="tr"
-          color="danger"
-          icon={AddAlert}
-          message={this.state.error}
-          open={this.state.tl}
-          closeNotification={() => this.setState({ tl: false })}
-          close
-        />
-      </div>
-    );
+      const state = { role };
+      return <Redirect to={pathname}></Redirect>;
+    } else {
+      return (
+        <div
+          style={{
+            "text-align": "center"
+          }}
+        >
+          <MuiThemeProvider>
+            <div>
+              {/* <Header title="Login" /> */}
+              <AppBar title="Login" />
+              <TextField
+                hintText="Enter your Username"
+                floatingLabelText="Username"
+                onKeyPress={this.handleKeyPress}
+                onChange={(event, newValue) =>
+                  this.setState({ username: newValue })
+                }
+              />
+              <br />
+              <TextField
+                type="password"
+                id="password"
+                hintText="Enter your Password"
+                floatingLabelText="Password"
+                onKeyPress={this.handleKeyPress}
+                onChange={(event, newValue) =>
+                  this.setState({ password: newValue })
+                }
+              />
+              <br />
+              <RaisedButton
+                id="submit"
+                label="Submit"
+                primary={true}
+                style={style}
+                onClick={event => this.handleClick(event)}
+              />
+            </div>
+          </MuiThemeProvider>
+          <Snackbar
+            place="tr"
+            color="danger"
+            icon={AddAlert}
+            message={this.state.error}
+            open={this.state.tl}
+            closeNotification={() => this.setState({ tl: false })}
+            close
+          />
+        </div>
+      );
+    }
   }
 }
 const style = {
