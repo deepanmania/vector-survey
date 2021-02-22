@@ -300,11 +300,11 @@ export function submitWaterFormData(inputObject, op, id) {
   return rp(options);
 }
 
-export function submitWaterLabFormData(inputObject, id) {
+export function submitWaterLabFormData(inputObject, id, op) {
   const options = {
     jar: true,
     json: true,
-    url: `${global.apiBaseUrl}/water?id=${id}&lab=true`,
+    url: `${global.apiBaseUrl}/water?id=${id}&lab=true&op=${op}`,
     method: "POST",
     body: inputObject
   };

@@ -16,7 +16,7 @@ import VectorAction from "views/VectorAction";
 const hist = createBrowserHistory();
 global.apiUrl = "https://master-dev.uhcitp.in";
 // global.apiBaseUrl = "http://localhost:9000";
-global.apiBaseUrl = "http://142.93.208.206:9000";
+global.apiBaseUrl = "http://143.110.241.253:9000";
 
 class Logout extends React.Component {
   render() {

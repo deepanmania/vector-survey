@@ -108,7 +108,7 @@ export default function LineList(props) {
   const [village, setVillage] = React.useState(0);
 
   const [habitation, setHabitation] = React.useState(0);
-
+  const [draftColor, setDraftColor] = React.useState("danger")
   const [street, setStreet] = React.useState(0);
   const [data, setData] = React.useState("");
   const responseMap = {
@@ -162,10 +162,20 @@ export default function LineList(props) {
   };
 
   const downloadCSV = () => {
-    const csv = parse(data);
+    const csv = parse(data.map(i => i.entry));
     const blob = new Blob([csv], { type: "text/plain;charset=utf-8" });
-    FileSaver.saveAs(blob, "vector-linelist.csv");
+    FileSaver.saveAs(blob, "linelist.csv");
   };
+
+  const [showDraft, setShowDraft] = React.useState(false)
+  const showDrafts = () => {
+    if (!showDraft) {
+      setDraftColor("info")
+    } else {
+      setDraftColor("danger")
+    }
+    setShowDraft(!showDraft)
+  }
 
   const handleChange = (fn, event) => {
     console.log(fn, event);
@@ -506,12 +516,18 @@ export default function LineList(props) {
               >
                 <h4 className={listClasses.cardTitleWhite}>Line List</h4>
               </div>
+               
               <div
-                onClick={downloadCSV}
+                
                 style={{
                   float: "right"
                 }}
               >
+                 {localStorage.getItem("appName") === "water-lab" && (
+                  <Button color={draftColor} style={{padding: "5px"}} onClick={showDrafts}>Show Drafts</Button>
+                )}
+                &nbsp;
+                <span onClick={downloadCSV}>
                 Export Result &nbsp;
                 <Icon
                   style={{
@@ -519,7 +535,7 @@ export default function LineList(props) {
                   }}
                 >
                   cloud_download
-                </Icon>
+                </Icon></span>
               </div>
             </CardHeader>
             <CardBody>
@@ -531,7 +547,7 @@ export default function LineList(props) {
                     ...Object.keys(data[0].entry),
                     ...[""]
                   ].map(i => keyMapper[i] || i)}
-                  tableData={data.map((i, idx) => {
+                  tableData={data.filter(i => i.draft === (showDraft ? true : null)).map((i, idx) => {
                     const id = i.id;
                     return [
                       idx + 1,
