@@ -33,7 +33,7 @@ import PropTypes from "prop-types";
 
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker
+  KeyboardDatePicker,
 } from "@material-ui/pickers";
 import Webcam from "react-webcam";
 import FormControl from "@material-ui/core/FormControl";
@@ -47,7 +47,7 @@ import { container } from "assets/jss/material-dashboard-react";
 const videoConstraints = {
   width: 1280,
   height: 720,
-  facingMode: "environment"
+  facingMode: "environment",
 };
 
 const styles = {
@@ -56,7 +56,7 @@ const styles = {
     margin: "0",
     fontSize: "14px",
     marginTop: "0",
-    marginBottom: "0"
+    marginBottom: "0",
   },
   cardTitleWhite: {
     color: "#FFFFFF",
@@ -65,15 +65,15 @@ const styles = {
     fontWeight: "300",
     fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
     marginBottom: "3px",
-    textDecoration: "none"
+    textDecoration: "none",
   },
   formControl: {
     width: "100%",
-    "margin-top": "27px"
+    "margin-top": "27px",
   },
   padContainer: {
-    padding: "0 10%"
-  }
+    padding: "0 10%",
+  },
 };
 
 const waterSampleParams = [
@@ -87,7 +87,7 @@ const waterSampleParams = [
   { name: "RO Plant", val: "roplant" },
   { name: "Distribution Pipeline Tap First", val: "tapfirst" },
   { name: "Distribution Pipeline Tap Middle", val: "tapmiddle" },
-  { name: "Distribution Pipeline Tap Last", val: "taplast" }
+  { name: "Distribution Pipeline Tap Last", val: "taplast" },
 ];
 
 const useStyles = makeStyles(styles);
@@ -99,7 +99,7 @@ const responseMap = {
   hud: "block",
   block: "village",
   village: "habitation",
-  habitation: "street"
+  habitation: "street",
 };
 
 export default function FillForm(props) {
@@ -117,27 +117,27 @@ export default function FillForm(props) {
   useEffect(() => {
     (async () => {
       if (stateProps.id) {
-        await Http.getResponse("districts", 33).then(res => {
+        await Http.getResponse("districts", 36).then((res) => {
           setDistricts(res);
         });
-        await Http.getResponse("hud", formValue.district).then(res => {
+        await Http.getResponse("hud", formValue.district).then((res) => {
           setHuds(res);
         });
-        await Http.getResponse("block", formValue.hud).then(res => {
+        await Http.getResponse("block", formValue.hud).then((res) => {
           setBlocks(res);
         });
-        await Http.getResponse("village", formValue.block).then(res => {
+        await Http.getResponse("village", formValue.block).then((res) => {
           setVillages(res);
         });
-        await Http.getResponse("habitation", formValue.village).then(res => {
+        await Http.getResponse("habitation", formValue.village).then((res) => {
           setHabitations(res);
         });
-        await Http.getResponse("street", formValue.habitation).then(res => {
+        await Http.getResponse("street", formValue.habitation).then((res) => {
           setLoaded(true);
           setStreets(res);
         });
       } else {
-        Http.getResponse("districts", 33).then(res => {
+        Http.getResponse("districts", 36).then((res) => {
           setDistricts(res);
         });
       }
@@ -191,7 +191,7 @@ export default function FillForm(props) {
     const photos = eval(param).photos;
     delete photos[idx];
     const val = eval(param);
-    val.photos = photos.filter(i => !!i);
+    val.photos = photos.filter((i) => !!i);
     eval(`set${param}`)(Object.assign({}, val));
   };
   const [infiltrationgallery, setinfiltrationgallery] = React.useState(
@@ -237,6 +237,35 @@ export default function FillForm(props) {
   const { latitude, longitude } = usePosition(true);
   const webcamRef = React.useRef(null);
   const handleSubmit = async (op = "insert", id) => {
+    const wait = (timeout = 2000) => {
+      return new Promise((resolve) => setTimeout(() => resolve, timeout));
+    };
+    if (!district || !hud) {
+      setmessageInfo("District, Hud are required to save the entry");
+      setshowInfo(true);
+      await wait();
+      setshowInfo(false);
+    }
+    if (
+      !infiltrationgallery.name &&
+      !infiltrationwell.name &&
+      !openwell.name &&
+      !borewell.name &&
+      !collectionsump.name &&
+      !pumpingstation.name &&
+      !overheadtank.name &&
+      !roplant.name &&
+      !tapfirst.name &&
+      !tapmiddle.name &&
+      !taplast.name
+    ) {
+      setmessageInfo(
+        "Please make atleast one entry in Status of Water Chlorination to save the entry."
+      );
+      setshowInfo(true);
+      await wait();
+      setshowInfo(false);
+    }
     const payload = {
       formType: "survey",
       userId: localStorage.getItem("userId"),
@@ -269,15 +298,15 @@ export default function FillForm(props) {
         visitType,
         visitReason,
         samplesTaken,
-        positiveContainers
-      }
+        positiveContainers,
+      },
     };
     setmessageInfo("Saving");
     setshowInfo(true);
     await Http.submitVectorFormData(payload, op, id).then(async () => {
       setshowInfo(false);
       props.history.push({
-        pathname: "lineList"
+        pathname: "lineList",
       });
     });
   };
@@ -286,7 +315,7 @@ export default function FillForm(props) {
   const capture = React.useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot({
       width: 1920,
-      height: 1080
+      height: 1080,
     });
     const obj = eval(paramVal);
     obj.photos.push(imageSrc);
@@ -296,12 +325,12 @@ export default function FillForm(props) {
   const closeModal = () => {
     setWebcamEnabled(false);
   };
-  const enableCamera = val => {
+  const enableCamera = (val) => {
     setParamVal(val);
     setWebcamEnabled(true);
   };
 
-  const handleDateChange = date => {
+  const handleDateChange = (date) => {
     setDateOfInspection(date);
   };
 
@@ -317,11 +346,11 @@ export default function FillForm(props) {
         "block",
         "village",
         "habitation",
-        "street"
+        "street",
       ].includes(fn)
     ) {
       console.log("!!!", fn, event);
-      Http.getResponse(responseMap[fn], event.target.value).then(res => {
+      Http.getResponse(responseMap[fn], event.target.value).then((res) => {
         // if (fn === "countries") {
         //   setCountry(targetVal);
         //   setStates(res);
@@ -612,7 +641,7 @@ export default function FillForm(props) {
                         "Institutions",
                         "Govt Building",
                         "Open Place",
-                        "Others"
+                        "Others",
                       ].map((i, idx) => (
                         <MenuItem value={i} key={idx}>
                           {i}
@@ -633,7 +662,7 @@ export default function FillForm(props) {
                       value={dateOfInspection}
                       onChange={handleDateChange}
                       KeyboardButtonProps={{
-                        "aria-label": "change date"
+                        "aria-label": "change date",
                       }}
                     />
                   </MuiPickersUtilsProvider>
@@ -643,10 +672,10 @@ export default function FillForm(props) {
                     labelText={`Latitude ${latitude} | Longitude ${longitude}`}
                     id="company-disabled"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
-                      disabled: true
+                      disabled: true,
                     }}
                   />
                 </GridItem>
@@ -710,7 +739,7 @@ export default function FillForm(props) {
             <CardBody>
               <GridContainer
                 style={{
-                  padding: "0 5%"
+                  padding: "0 5%",
                 }}
               >
                 {waterSampleParams.map((param, idx) => (
@@ -733,14 +762,14 @@ export default function FillForm(props) {
                                 labelText="name"
                                 id={`${param.val}.name`}
                                 formControlProps={{
-                                  fullWidth: true
+                                  fullWidth: true,
                                 }}
                                 inputProps={{
                                   value: eval(param.val).name,
                                   onChange: setWaterParamState.bind(
                                     null,
                                     `${param.val}`
-                                  )
+                                  ),
                                 }}
                               />
                             </GridItem>
@@ -749,10 +778,10 @@ export default function FillForm(props) {
                                 labelText={`Latitude ${latitude} | Longitude ${longitude}`}
                                 id="company-disabled"
                                 formControlProps={{
-                                  fullWidth: true
+                                  fullWidth: true,
                                 }}
                                 inputProps={{
-                                  disabled: true
+                                  disabled: true,
                                 }}
                               />
                             </GridItem>
@@ -769,7 +798,7 @@ export default function FillForm(props) {
                                       >
                                         <div
                                           style={{
-                                            position: "relative"
+                                            position: "relative",
                                           }}
                                         >
                                           <button
@@ -781,7 +810,7 @@ export default function FillForm(props) {
                                             className="close"
                                             style={{
                                               right: "0px",
-                                              position: "absolute"
+                                              position: "absolute",
                                             }}
                                           >
                                             <span>×</span>
@@ -813,12 +842,12 @@ export default function FillForm(props) {
                                           position: "relative",
                                           "margin-left": "30%",
                                           "margin-top": "35%",
-                                          cursor: "pointer"
+                                          cursor: "pointer",
                                         }}
                                       >
                                         add_a_photo
                                       </Icon>
-                                    </GridItem>
+                                    </GridItem>,
                                   ])}
                               </GridContainer>
                             </GridItem>
@@ -833,12 +862,12 @@ export default function FillForm(props) {
                     labelText="Number of Samples Taken"
                     id="samplestaken"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: samplesTaken,
-                      onChange: setWaterParamState.bind(null, "SamplesTaken")
+                      onChange: setWaterParamState.bind(null, "SamplesTaken"),
                     }}
                   />
                 </GridItem>
@@ -860,12 +889,12 @@ export default function FillForm(props) {
                     labelText="Number of Houses"
                     id="houses"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: numberOfHouses,
-                      onChange: handleChange.bind(null, "numberofhouses")
+                      onChange: handleChange.bind(null, "numberofhouses"),
                     }}
                   />
                 </GridItem>
@@ -874,12 +903,12 @@ export default function FillForm(props) {
                     labelText="Number of Houses with breeding positive"
                     id="positivehouses"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: positiveHouses,
-                      onChange: handleChange.bind(null, "positivehouses")
+                      onChange: handleChange.bind(null, "positivehouses"),
                     }}
                   />
                 </GridItem>
@@ -888,12 +917,12 @@ export default function FillForm(props) {
                     labelText="Computed Indices - House Index"
                     id="houseindex"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: houseIndex,
-                      onChange: handleChange.bind(null, "houseindex")
+                      onChange: handleChange.bind(null, "houseindex"),
                     }}
                   />
                 </GridItem>
@@ -904,12 +933,12 @@ export default function FillForm(props) {
                     labelText="Number of Container Inspected"
                     id="containers"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: containers,
-                      onChange: handleChange.bind(null, "containers")
+                      onChange: handleChange.bind(null, "containers"),
                     }}
                   />
                 </GridItem>
@@ -917,12 +946,12 @@ export default function FillForm(props) {
                   <CustomInput
                     labelText="Number of Container with Breeding positive"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: positiveContainers,
-                      onChange: handleChange.bind(null, "positiveContainers")
+                      onChange: handleChange.bind(null, "positiveContainers"),
                     }}
                   />
                 </GridItem>
@@ -931,12 +960,12 @@ export default function FillForm(props) {
                     labelText="Computed Indices - Container Index"
                     id="containerindex"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: containerIndex,
-                      onChange: handleChange.bind(null, "containerindex")
+                      onChange: handleChange.bind(null, "containerindex"),
                     }}
                   />
                 </GridItem>
@@ -947,12 +976,12 @@ export default function FillForm(props) {
                     labelText="Computed Indices - Breteau Index"
                     id="breteauindex"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: breteauIndex,
-                      onChange: handleChange.bind(null, "breteauindex")
+                      onChange: handleChange.bind(null, "breteauindex"),
                     }}
                   />
                 </GridItem>
@@ -962,13 +991,13 @@ export default function FillForm(props) {
         </GridItem>
         <CardFooter
           style={{
-            width: "100%"
+            width: "100%",
           }}
         >
           <Button
             color="primary"
             style={{
-              marginLeft: "50%"
+              marginLeft: "50%",
             }}
             onClick={handleSubmit.bind(
               null,

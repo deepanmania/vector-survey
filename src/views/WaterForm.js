@@ -26,13 +26,13 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Icon from "@material-ui/core/Icon";
 import Snackbar from "components/Snackbar/Snackbar.js";
 import AddAlert from "@material-ui/icons/AddAlert";
-import Checkbox from '@material-ui/core/Checkbox';
+import Checkbox from "@material-ui/core/Checkbox";
 // tabs
 // import PropTypes from "prop-types";
 
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker
+  KeyboardDatePicker,
 } from "@material-ui/pickers";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
@@ -47,7 +47,7 @@ const styles = {
     margin: "0",
     fontSize: "14px",
     marginTop: "0",
-    marginBottom: "0"
+    marginBottom: "0",
   },
   cardTitleWhite: {
     color: "#FFFFFF",
@@ -56,15 +56,15 @@ const styles = {
     fontWeight: "300",
     fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
     marginBottom: "3px",
-    textDecoration: "none"
+    textDecoration: "none",
   },
   formControl: {
     width: "100%",
-    "margin-top": "27px"
+    "margin-top": "27px",
   },
   padContainer: {
-    padding: "0 10%"
-  }
+    padding: "0 10%",
+  },
 };
 
 const waterSampleParams = [
@@ -78,9 +78,8 @@ const waterSampleParams = [
   { name: "RO Plant", val: "roplant" },
   { name: "Distribution Pipeline Tap First", val: "tapfirst" },
   { name: "Distribution Pipeline Tap Middle", val: "tapmiddle" },
-  { name: "Distribution Pipeline Tap Last", val: "taplast" }
+  { name: "Distribution Pipeline Tap Last", val: "taplast" },
 ];
-
 
 const colourArr = [
   "Colourless",
@@ -89,7 +88,7 @@ const colourArr = [
   "Brownish",
   "Greenish",
   "Slightly Greenish",
-  "Others"
+  "Others",
 ];
 
 const odourArr = [
@@ -99,7 +98,7 @@ const odourArr = [
   "Aromatic",
   "Tangic",
   "Bitter",
-  "Disagreeable (Non-Acceptable)"
+  "Disagreeable (Non-Acceptable)",
 ];
 
 const ammonicalNitrogenArr = ["Nil – A", "Trace", "Present", "Marked - NA"];
@@ -107,20 +106,20 @@ const nitriteArr = [
   "Nil",
   "Trace",
   "Present",
-  "Marked" //(Nil, Trace, Present A, Marked More than NA)
+  "Marked", //(Nil, Trace, Present A, Marked More than NA)
 ];
 const sulphateArr = [
   "Nil",
   "Trace",
   "Present",
-  "marked" // (Nil, Trace 0-200, Present 200-400 A, Marked More than 400 NA
+  "marked", // (Nil, Trace 0-200, Present 200-400 A, Marked More than 400 NA
 ];
 
 const phosphateArr = [
   "Nil",
   "Trace",
   "Present",
-  "Marked" // ( Nil, Trace A, Present and Marked NA)
+  "Marked", // ( Nil, Trace A, Present and Marked NA)
 ];
 
 const useStyles = makeStyles(styles);
@@ -132,7 +131,7 @@ const responseMap = {
   hud: "block",
   block: "village",
   village: "habitation",
-  habitation: "street"
+  habitation: "street",
 };
 
 export default function FillForm(props) {
@@ -155,31 +154,31 @@ export default function FillForm(props) {
     (async () => {
       console.log(stateProps);
       if (stateProps.id) {
-        await Http.getResponse("districts", 33).then(res => {
+        await Http.getResponse("districts", 36).then((res) => {
           setdistricts(res);
         });
-        await Http.getResponse("hud", formValue.entry.district).then(res => {
+        await Http.getResponse("hud", formValue.entry.district).then((res) => {
           setHuds(res);
         });
-        await Http.getResponse("block", formValue.entry.hud).then(res => {
+        await Http.getResponse("block", formValue.entry.hud).then((res) => {
           setBlocks(res);
         });
-        await Http.getResponse("village", formValue.entry.block).then(res => {
+        await Http.getResponse("village", formValue.entry.block).then((res) => {
           setVillages(res);
         });
         await Http.getResponse("habitation", formValue.entry.village).then(
-          res => {
+          (res) => {
             setHabitations(res);
           }
         );
         await Http.getResponse("street", formValue.entry.habitation).then(
-          res => {
+          (res) => {
             setLoaded(true);
             setStreets(res);
           }
         );
       } else {
-        Http.getResponse("districts", 33).then(res => {
+        Http.getResponse("districts", 36).then((res) => {
           setdistricts(res);
         });
       }
@@ -318,7 +317,7 @@ export default function FillForm(props) {
   );
   const [
     glucosePhosphateMethylRed,
-    setGlucosePhosphateMethylRed
+    setGlucosePhosphateMethylRed,
   ] = React.useState(formValue.labentry.glucosePhosphateMethylRed || "");
   const [singleBroth, setSingleBroth] = React.useState(
     formValue.labentry.singleBroth || ""
@@ -331,7 +330,7 @@ export default function FillForm(props) {
   );
   const [
     clostridiumPerfereingenes,
-    setClostridiumPerfereingenes
+    setClostridiumPerfereingenes,
   ] = React.useState(formValue.labentry.clostridiumPerfereingenes || "");
   const [salmonellaAndShigella, setSalmonellaAndShigella] = React.useState(
     formValue.labentry.salmonellaAndShigella || ""
@@ -350,11 +349,11 @@ export default function FillForm(props) {
   );
   const [
     proteolyticBacterialCount,
-    setProteolyticBacterialCount
+    setProteolyticBacterialCount,
   ] = React.useState(formValue.labentry.proteolyticBacterialCount || "");
   const [
     thermophilicBacterialCount,
-    setThermophilicBacterialCount
+    setThermophilicBacterialCount,
   ] = React.useState(formValue.labentry.thermophilicBacterialCount || "");
   const [microscopicalExam, setMicroscopicalExam] = React.useState(
     formValue.labentry.microscopicalExam || ""
@@ -368,9 +367,9 @@ export default function FillForm(props) {
   const [placeType, setPlaceType] = React.useState(
     formValue.entry.placeType || ""
   );
-    const setCheckbox = (fn) => {
-      eval("set" + fn)(!eval(fn))
-    }
+  const setCheckbox = (fn) => {
+    eval("set" + fn)(!eval(fn));
+  };
   const [samplesTaken, setSamplesTaken] = React.useState(
     formValue.entry.samplesTaken || 0
   );
@@ -383,11 +382,33 @@ export default function FillForm(props) {
   const { latitude, longitude } = usePosition(true);
   const handleSubmit = async (op = "insert", id) => {
     const wait = (timeout = 2000) => {
-      return new Promise(resolve => setTimeout(() => resolve, timeout));
+      return new Promise((resolve) => setTimeout(() => resolve, timeout));
     };
-    if (!district || !nameOfPlace) {
+    if (!district || !nameOfPlace || !hud) {
       setmessageInfo(
-        "District and Name of the place are required to save the entry"
+        "District, Hud and Name of the place are required to save the entry"
+      );
+      setinfocolor("danger");
+      setshowInfo(true);
+      await wait();
+      setshowInfo(false);
+      setinfocolor("info");
+    }
+    if (
+      !infiltrationgallery.name &&
+      !infiltrationwell.name &&
+      !openwell.name &&
+      !borewell.name &&
+      !collectionsump.name &&
+      !pumpingstation.name &&
+      !overheadtank.name &&
+      !roplant.name &&
+      !tapfirst.name &&
+      !tapmiddle.name &&
+      !taplast.name
+    ) {
+      setmessageInfo(
+        "Please make atleast one entry in Status of Water Chlorination to save the entry."
       );
       setinfocolor("danger");
       setshowInfo(true);
@@ -418,8 +439,8 @@ export default function FillForm(props) {
         tapfirst,
         tapmiddle,
         taplast,
-        samplesTaken
-      }
+        samplesTaken,
+      },
     };
     setmessageInfo("Saving");
     setshowInfo(true);
@@ -472,8 +493,8 @@ export default function FillForm(props) {
               lipolyticBacterialCount,
               proteolyticBacterialCount,
               thermophilicBacterialCount,
-              microscopicalExam
-            }
+              microscopicalExam,
+            },
           };
           return Http.submitWaterLabFormData(labPayload, id, op);
         }
@@ -481,26 +502,30 @@ export default function FillForm(props) {
       .then(() => {
         setshowInfo(false);
         props.history.push({
-          pathname: "lineList"
+          pathname: "lineList",
         });
       });
   };
 
-  const handleDateChange = date => {
+  const handleDateChange = (date) => {
     setDateOfInspection(date);
   };
 
   const status = ["positive", "negative", "not done"];
 
-  const [labanalysis, setlabanalysis] = React.useState(true)
-  const [physicalexam, setphysicalexam] = React.useState(true)
-  const [chemicalexam, setchemicalexam] = React.useState(true)
-  const [bactexam, setbackexam] = React.useState(true)
-  const [bioexam, setbioexam] = React.useState(true)
+  const [labanalysis, setlabanalysis] = React.useState(true);
+  const [physicalexam, setphysicalexam] = React.useState(true);
+  const [chemicalexam, setchemicalexam] = React.useState(true);
+  const [bactexam, setbactexam] = React.useState(true);
+  const [bioexam, setbioexam] = React.useState(true);
+
+  React.useEffect(() => {
+    setHardness(Number(carbonateHardness) + Number(nonCarbonateHardness));
+  }, [carbonateHardness, nonCarbonateHardness]);
 
   const setWaterParamState = (varName, event) => {
     let count = 0;
-    waterSampleParams.forEach(param => {
+    waterSampleParams.forEach((param) => {
       if (eval(param.val)) {
         count++;
       }
@@ -508,7 +533,6 @@ export default function FillForm(props) {
     });
     const targetVal = (event.target || {}).value;
     eval("set" + varName)(targetVal);
-    setHardness(Number(carbonateHardness) + Number(nonCarbonateHardness));
   };
 
   const handleChange = (fn, event) => {
@@ -523,10 +547,10 @@ export default function FillForm(props) {
         "block",
         "village",
         "habitation",
-        "street"
+        "street",
       ].includes(fn)
     ) {
-      Http.getResponse(responseMap[fn], targetVal).then(res => {
+      Http.getResponse(responseMap[fn], targetVal).then((res) => {
         // if (fn === "countries") {
         //   setCountry(targetVal);
         //   setStates(res);
@@ -756,7 +780,7 @@ export default function FillForm(props) {
                         "Prisons",
                         "Government Institutions",
                         "Private",
-                        "Others"
+                        "Others",
                       ].map((i, idx) => (
                         <MenuItem value={i} key={idx}>
                           {i}
@@ -777,7 +801,7 @@ export default function FillForm(props) {
                       value={dateOfInspection}
                       onChange={handleDateChange}
                       KeyboardButtonProps={{
-                        "aria-label": "change date"
+                        "aria-label": "change date",
                       }}
                     />
                   </MuiPickersUtilsProvider>
@@ -787,12 +811,12 @@ export default function FillForm(props) {
                     labelText="Name of the Place"
                     id="placename"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "text",
                       value: nameOfPlace,
-                      onChange: handleChange.bind(null, "nameofplace")
+                      onChange: handleChange.bind(null, "nameofplace"),
                     }}
                   />
                 </GridItem>
@@ -809,7 +833,7 @@ export default function FillForm(props) {
             <CardBody>
               <GridContainer
                 style={{
-                  padding: "0 5%"
+                  padding: "0 5%",
                 }}
               >
                 {waterSampleParams.map((param, idx) => (
@@ -832,14 +856,14 @@ export default function FillForm(props) {
                                 labelText="name"
                                 id={`${param.val}.name`}
                                 formControlProps={{
-                                  fullWidth: true
+                                  fullWidth: true,
                                 }}
                                 inputProps={{
                                   value: eval(param.val),
                                   onChange: setWaterParamState.bind(
                                     null,
                                     `${param.val}`
-                                  )
+                                  ),
                                 }}
                               />
                             </GridItem>
@@ -848,10 +872,10 @@ export default function FillForm(props) {
                                 labelText={`Latitude ${latitude} | Longitude ${longitude}`}
                                 id="company-disabled"
                                 formControlProps={{
-                                  fullWidth: true
+                                  fullWidth: true,
                                 }}
                                 inputProps={{
-                                  disabled: true
+                                  disabled: true,
                                 }}
                               />
                             </GridItem>
@@ -860,7 +884,7 @@ export default function FillForm(props) {
                                 fontSize="large"
                                 style={{
                                   paddingTop: "8%",
-                                  paddingLeft: "30%"
+                                  paddingLeft: "30%",
                                 }}
                               >
                                 add_a_photo
@@ -877,12 +901,12 @@ export default function FillForm(props) {
                     labelText="Number of Samples Taken"
                     id="samplestaken"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: samplesTaken,
-                      onChange: setWaterParamState.bind(null, "SamplesTaken")
+                      onChange: setWaterParamState.bind(null, "SamplesTaken"),
                     }}
                   />
                 </GridItem>
@@ -893,13 +917,19 @@ export default function FillForm(props) {
         {localStorage.getItem("appName") === "water-lab" && (
           <div
             style={{
-              width: "100%"
+              width: "100%",
             }}
           >
             <GridItem xs={12} sm={12} md={12} className={classes.padContainer}>
               <Card>
                 <CardHeader color="primary">
-                  <h4 className={classes.cardTitleWhite}>Lab Analysis&nbsp;<Checkbox checked={!labanalysis} onChange={setCheckbox.bind(null, "labanalysis")}/></h4>
+                  <h4 className={classes.cardTitleWhite}>
+                    Lab Analysis&nbsp;
+                    <Checkbox
+                      checked={!labanalysis}
+                      onChange={setCheckbox.bind(null, "labanalysis")}
+                    />
+                  </h4>
                   {/* <p className={classes.cardCategoryWhite}>Complete your profile</p> */}
                 </CardHeader>
                 <CardBody>
@@ -918,7 +948,7 @@ export default function FillForm(props) {
                             "SampleReceivedDate"
                           )}
                           KeyboardButtonProps={{
-                            "aria-label": "change date"
+                            "aria-label": "change date",
                           }}
                           disabled={labanalysis}
                         />
@@ -938,7 +968,7 @@ export default function FillForm(props) {
                             "SampleTestedDate"
                           )}
                           KeyboardButtonProps={{
-                            "aria-label": "change date"
+                            "aria-label": "change date",
                           }}
                           disabled={labanalysis}
                         />
@@ -949,12 +979,12 @@ export default function FillForm(props) {
                         labelText="Type Of Test"
                         id="testtype"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
                           type: "text",
                           value: testType,
-                          onChange: setWaterParamState.bind(null, "TestType")
+                          onChange: setWaterParamState.bind(null, "TestType"),
                         }}
                         disabled={labanalysis}
                       />
@@ -967,7 +997,11 @@ export default function FillForm(props) {
               <Card>
                 <CardHeader color="primary">
                   <h4 className={classes.cardTitleWhite}>
-                    Physical Examination&nbsp;<Checkbox checked={!physicalexam} onChange={setCheckbox.bind(null, "physicalexam")}/>
+                    Physical Examination&nbsp;
+                    <Checkbox
+                      checked={!physicalexam}
+                      onChange={setCheckbox.bind(null, "physicalexam")}
+                    />
                   </h4>
                   {/* <p className={classes.cardCategoryWhite}>Complete your profile</p> */}
                 </CardHeader>
@@ -987,7 +1021,7 @@ export default function FillForm(props) {
                             "ReportingDate"
                           )}
                           KeyboardButtonProps={{
-                            "aria-label": "change date"
+                            "aria-label": "change date",
                           }}
                           disabled={physicalexam}
                         />
@@ -1018,13 +1052,13 @@ export default function FillForm(props) {
                         labelText="Turbidity"
                         id="turbidity"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:physicalexam,
+                          disabled: physicalexam,
                           type: "number",
                           value: turbidity,
-                          onChange: setWaterParamState.bind(null, "Turbidity")
+                          onChange: setWaterParamState.bind(null, "Turbidity"),
                         }}
                       />
                     </GridItem>
@@ -1034,7 +1068,7 @@ export default function FillForm(props) {
                           Odour
                         </InputLabel>
                         <Select
-                        disabled={physicalexam}
+                          disabled={physicalexam}
                           labelId="demo-simple-select-helper-label"
                           id="odour"
                           value={odour}
@@ -1056,7 +1090,11 @@ export default function FillForm(props) {
               <Card>
                 <CardHeader color="primary">
                   <h4 className={classes.cardTitleWhite}>
-                    Chemical Examination&nbsp;<Checkbox checked={!chemicalexam} onChange={setCheckbox.bind(null, "chemicalexam")}/>
+                    Chemical Examination&nbsp;
+                    <Checkbox
+                      checked={!chemicalexam}
+                      onChange={setCheckbox.bind(null, "chemicalexam")}
+                    />
                   </h4>
                   {/* <p className={classes.cardCategoryWhite}>Complete your profile</p> */}
                 </CardHeader>
@@ -1067,16 +1105,16 @@ export default function FillForm(props) {
                         labelText="Total Dissolved solids"
                         id="Total Dissolved solids"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: totalDissolvedSolids,
                           onChange: setWaterParamState.bind(
                             null,
                             "TotalDissolvedSolids"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1085,13 +1123,13 @@ export default function FillForm(props) {
                         labelText="Hardness"
                         id="Hardness"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "text",
                           value: hardness,
-                          onChange: setWaterParamState.bind(null, "Hardness")
+                          onChange: setWaterParamState.bind(null, "Hardness"),
                         }}
                       />
                     </GridItem>
@@ -1100,16 +1138,16 @@ export default function FillForm(props) {
                         labelText="Carbonate hardness"
                         id="Carbonate hardness"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: carbonateHardness,
                           onChange: setWaterParamState.bind(
                             null,
                             "CarbonateHardness"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1118,16 +1156,16 @@ export default function FillForm(props) {
                         labelText="Non-Carbonate Hardness"
                         id="Non-Carbonate Hardness"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: nonCarbonateHardness,
                           onChange: setWaterParamState.bind(
                             null,
                             "NonCarbonateHardness"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1138,16 +1176,16 @@ export default function FillForm(props) {
                         labelText="Total hardness"
                         id="Total hardness"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: totalHardness,
                           onChange: setWaterParamState.bind(
                             null,
                             "TotalHardness"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1156,16 +1194,16 @@ export default function FillForm(props) {
                         labelText="Chloride as Chlorine"
                         id="Chloride as Chlorine"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: chlorideAsChlorine,
                           onChange: setWaterParamState.bind(
                             null,
                             "ChlorideAsChlorine"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1197,16 +1235,16 @@ export default function FillForm(props) {
                         labelText="Oxygen absorption (Tidy's test)"
                         id="Oxygen absorption (Tidy's test)"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: oxygenAbsorption,
                           onChange: setWaterParamState.bind(
                             null,
                             "oxygenAbsorption"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1217,13 +1255,13 @@ export default function FillForm(props) {
                         labelText="Nitrate"
                         id="Nitrate"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: nitrate,
-                          onChange: setWaterParamState.bind(null, "Nitrate")
+                          onChange: setWaterParamState.bind(null, "Nitrate"),
                         }}
                       />
                     </GridItem>
@@ -1232,16 +1270,16 @@ export default function FillForm(props) {
                         labelText="Alkalinity-Phenophthalein (Only one can be Selected)"
                         id="Alkalinity-Phenophthalein (Only one can be Selected)"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: phenophthalein,
                           onChange: setWaterParamState.bind(
                             null,
                             "Phenophthalein"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1250,16 +1288,16 @@ export default function FillForm(props) {
                         labelText="Alkalinity-Methyl Orange"
                         id="Alkalinity-Methyl Orange"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: methylOrange,
                           onChange: setWaterParamState.bind(
                             null,
                             "MethylOrange"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1268,13 +1306,13 @@ export default function FillForm(props) {
                         labelText="Fluoride"
                         id="Fluoride"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: fluoride,
-                          onChange: setWaterParamState.bind(null, "Fluoride")
+                          onChange: setWaterParamState.bind(null, "Fluoride"),
                         }}
                       />
                     </GridItem>
@@ -1285,13 +1323,13 @@ export default function FillForm(props) {
                         labelText="pH"
                         id="pH"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: ph,
-                          onChange: setWaterParamState.bind(null, "Ph")
+                          onChange: setWaterParamState.bind(null, "Ph"),
                         }}
                       />
                     </GridItem>
@@ -1300,13 +1338,13 @@ export default function FillForm(props) {
                         labelText="Total Iron"
                         id="Total Iron"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: totalIron,
-                          onChange: setWaterParamState.bind(null, "TotalIron")
+                          onChange: setWaterParamState.bind(null, "TotalIron"),
                         }}
                       />
                     </GridItem>
@@ -1316,7 +1354,7 @@ export default function FillForm(props) {
                           Nitrite
                         </InputLabel>
                         <Select
-                        disabled={chemicalexam}
+                          disabled={chemicalexam}
                           labelId="demo-simple-select-helper-label"
                           id="Nitrite"
                           value={nitrite}
@@ -1377,16 +1415,16 @@ export default function FillForm(props) {
                         labelText="Electrical conductivity"
                         id="Electrical conductivity"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
-                          disabled:chemicalexam,
+                          disabled: chemicalexam,
                           type: "number",
                           value: electricalConductivity,
                           onChange: setWaterParamState.bind(
                             null,
                             "ElectricalConductivity"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1398,7 +1436,11 @@ export default function FillForm(props) {
               <Card>
                 <CardHeader color="primary">
                   <h4 className={classes.cardTitleWhite}>
-                    Bacteriological Examination&nbsp;<Checkbox checked={!bactexam} onChange={setCheckbox.bind(null, "bactexam")}/>
+                    Bacteriological Examination&nbsp;
+                    <Checkbox
+                      checked={!bactexam}
+                      onChange={setCheckbox.bind(null, "bactexam")}
+                    />
                   </h4>
                   {/* <p className={classes.cardCategoryWhite}>Complete your profile</p> */}
                 </CardHeader>
@@ -1409,7 +1451,7 @@ export default function FillForm(props) {
                         labelText="Total Colony count per ml on agar at 37 deg Centigrade"
                         id="TotalColonyCount"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
                           disabled: bactexam,
@@ -1418,7 +1460,7 @@ export default function FillForm(props) {
                           onChange: setWaterParamState.bind(
                             null,
                             "TotalColonyCount"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1426,17 +1468,18 @@ export default function FillForm(props) {
                       <CustomInput
                         labelText="MPN Most Probable Number / 100ml"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
                           disabled: bactexam,
                           type: "number",
                           value: mpn,
-                          onChange: setWaterParamState.bind(null, "Mpn")
+                          onChange: setWaterParamState.bind(null, "Mpn"),
                         }}
                       />
                     </GridItem>
-                  </GridContainer><br />
+                  </GridContainer>
+                  <br />
                   <h6>Rapid Ecoli tests</h6>
                   <GridContainer>
                     <GridItem xs={12} sm={12} md={3}>
@@ -1480,7 +1523,9 @@ export default function FillForm(props) {
                         </Select>
                       </FormControl>
                     </GridItem>
-                  </GridContainer><br /><br />
+                  </GridContainer>
+                  <br />
+                  <br />
                   <h6>
                     Confirmation test: Sugar tests (E.coli, Citrobacter,
                     klebsiella, Irregular)
@@ -1568,7 +1613,9 @@ export default function FillForm(props) {
                         </Select>
                       </FormControl>
                     </GridItem>
-                  </GridContainer><br /><br />
+                  </GridContainer>
+                  <br />
+                  <br />
                   <h6>Special tests</h6>
                   <GridContainer>
                     <GridItem xs={12} sm={12} md={3}>
@@ -1731,7 +1778,7 @@ export default function FillForm(props) {
                       <CustomInput
                         labelText="Lipolytic bacterial count"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
                           disabled: bactexam,
@@ -1740,7 +1787,7 @@ export default function FillForm(props) {
                           onChange: setWaterParamState.bind(
                             null,
                             "LipolyticBacterialCount"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1750,7 +1797,7 @@ export default function FillForm(props) {
                       <CustomInput
                         labelText="Proteolytic bacterial count"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
                           disabled: bactexam,
@@ -1759,7 +1806,7 @@ export default function FillForm(props) {
                           onChange: setWaterParamState.bind(
                             null,
                             "ProteolyticBacterialCount"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1767,7 +1814,7 @@ export default function FillForm(props) {
                       <CustomInput
                         labelText="Thermophilic bacterial count"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
                           disabled: bactexam,
@@ -1776,7 +1823,7 @@ export default function FillForm(props) {
                           onChange: setWaterParamState.bind(
                             null,
                             "ThermophilicBacterialCount"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1788,7 +1835,11 @@ export default function FillForm(props) {
               <Card>
                 <CardHeader color="primary">
                   <h4 className={classes.cardTitleWhite}>
-                    Biological Examination&nbsp;<Checkbox checked={!bioexam} onChange={setCheckbox.bind(null, "bioexam")}/>
+                    Biological Examination&nbsp;
+                    <Checkbox
+                      checked={!bioexam}
+                      onChange={setCheckbox.bind(null, "bioexam")}
+                    />
                   </h4>
                   {/* <p className={classes.cardCategoryWhite}>Complete your profile</p> */}
                 </CardHeader>
@@ -1798,7 +1849,7 @@ export default function FillForm(props) {
                       <CustomInput
                         labelText="Microscopical Exam"
                         formControlProps={{
-                          fullWidth: true
+                          fullWidth: true,
                         }}
                         inputProps={{
                           disabled: bioexam,
@@ -1807,7 +1858,7 @@ export default function FillForm(props) {
                           onChange: setWaterParamState.bind(
                             null,
                             "MicroscopicalExam"
-                          )
+                          ),
                         }}
                       />
                     </GridItem>
@@ -1817,7 +1868,7 @@ export default function FillForm(props) {
             </GridItem>
           </div>
         )}
-        <CardFooter style={{marginLeft: "40%"}}>
+        <CardFooter style={{ marginLeft: "40%" }}>
           <Button
             color="primary"
             onClick={handleSubmit.bind(
@@ -1827,14 +1878,11 @@ export default function FillForm(props) {
             )}
           >
             Save Entry
-          </Button>&nbsp;&nbsp;&nbsp;
+          </Button>
+          &nbsp;&nbsp;&nbsp;
           <Button
             color="primary"
-            onClick={handleSubmit.bind(
-              null,
-              "draft",
-              stateProps.id
-            )}
+            onClick={handleSubmit.bind(null, "draft", stateProps.id)}
           >
             Save Draft
           </Button>

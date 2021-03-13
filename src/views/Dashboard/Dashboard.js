@@ -45,7 +45,7 @@ import "date-fns";
 import moment from "moment";
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker
+  KeyboardDatePicker,
 } from "@material-ui/pickers";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -74,7 +74,7 @@ const formStyles = {
     margin: "0",
     fontSize: "14px",
     marginTop: "0",
-    marginBottom: "0"
+    marginBottom: "0",
   },
   cardTitleWhite: {
     color: "#FFFFFF",
@@ -83,15 +83,15 @@ const formStyles = {
     fontWeight: "300",
     fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
     marginBottom: "3px",
-    textDecoration: "none"
+    textDecoration: "none",
   },
   formControl: {
     width: "100%",
-    "margin-top": "27px"
+    "margin-top": "27px",
   },
   padContainer: {
-    padding: "0 10%"
-  }
+    padding: "0 10%",
+  },
 };
 
 const useFormStyles = makeStyles(formStyles);
@@ -101,8 +101,11 @@ const useStyles = makeStyles(styles);
 export default function Dashboard() {
   const [initData, setInitData] = React.useState("");
   useEffect(() => {
-    Http.getDashBoardData(localStorage.getItem("appName")).then(res => {
+    Http.getDashBoardData(localStorage.getItem("appName")).then((res) => {
       setInitData(res);
+      Http.getResponse("districts", 36).then((res) => {
+        setDistricts(res);
+      });
     });
   }, []);
   const responseMap = {
@@ -112,10 +115,10 @@ export default function Dashboard() {
     hud: "block",
     block: "village",
     village: "habitation",
-    habitation: "street"
+    habitation: "street",
   };
 
-  const handleDateChange = date => {
+  const handleDateChange = (date) => {
     setDateOfInspection(date);
   };
 
@@ -131,11 +134,11 @@ export default function Dashboard() {
         "block",
         "village",
         "habitation",
-        "street"
+        "street",
       ].includes(fn)
     ) {
       console.log("!!!", fn, event);
-      Http.getResponse(responseMap[fn], event.target.value).then(res => {
+      Http.getResponse(responseMap[fn], event.target.value).then((res) => {
         // if (fn === "countries") {
         //   setCountry(targetVal);
         //   setStates(res);
@@ -183,10 +186,10 @@ export default function Dashboard() {
         village,
         habitation,
         placeType,
-        dateOfInspection
-      }
+        dateOfInspection,
+      },
     };
-    Http.applyFilter(payload).then(resp => {
+    Http.applyFilter(payload).then((resp) => {
       setData(resp || []);
     });
   };
@@ -459,7 +462,7 @@ export default function Dashboard() {
                             "Institutions",
                             "Govt Building",
                             "Open Place",
-                            "Others"
+                            "Others",
                           ]
                         : [
                             "Corporation",
@@ -469,7 +472,7 @@ export default function Dashboard() {
                             "Government Homes",
                             "Railway Stations",
                             "Prisons",
-                            "Government Institutions"
+                            "Government Institutions",
                           ]
                       ).map((i, idx) => (
                         <MenuItem value={i} key={idx}>
@@ -491,7 +494,7 @@ export default function Dashboard() {
                       value={dateOfInspection}
                       onChange={handleDateChange}
                       KeyboardButtonProps={{
-                        "aria-label": "change date"
+                        "aria-label": "change date",
                       }}
                     />
                   </MuiPickersUtilsProvider>
@@ -507,7 +510,7 @@ export default function Dashboard() {
           {data && (
             <div
               style={{
-                marginLeft: "40%"
+                marginLeft: "40%",
               }}
             >
               <PieChart
@@ -524,14 +527,14 @@ export default function Dashboard() {
                         : data.length >= 10
                         ? "#E38627"
                         : "#de2828",
-                    value: data.length
-                  }
+                    value: data.length,
+                  },
                 ]}
                 label
                 labelPosition={0}
                 labelStyle={{
                   fontFamily: "sans-serif",
-                  fontSize: "25px"
+                  fontSize: "25px",
                 }}
                 lengthAngle={360}
                 lineWidth={20}
@@ -545,14 +548,14 @@ export default function Dashboard() {
                 totalValue={15}
                 viewBoxSize={[100, 100]}
                 style={{
-                  float: "left"
+                  float: "left",
                 }}
               />
               <h4
                 style={{
                   float: "right",
                   "padding-top": "10%",
-                  "padding-right": "60%"
+                  "padding-right": "60%",
                 }}
               >
                 Entries

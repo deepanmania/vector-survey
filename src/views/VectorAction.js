@@ -30,7 +30,7 @@ import PropTypes from "prop-types";
 
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker
+  KeyboardDatePicker,
 } from "@material-ui/pickers";
 import Webcam from "react-webcam";
 import FormControl from "@material-ui/core/FormControl";
@@ -43,7 +43,7 @@ import { Http } from "lib";
 const videoConstraints = {
   width: 500,
   height: 500,
-  facingMode: "environment"
+  facingMode: "environment",
 };
 
 const styles = {
@@ -52,7 +52,7 @@ const styles = {
     margin: "0",
     fontSize: "14px",
     marginTop: "0",
-    marginBottom: "0"
+    marginBottom: "0",
   },
   cardTitleWhite: {
     color: "#FFFFFF",
@@ -61,15 +61,15 @@ const styles = {
     fontWeight: "300",
     fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
     marginBottom: "3px",
-    textDecoration: "none"
+    textDecoration: "none",
   },
   formControl: {
     width: "100%",
-    "margin-top": "27px"
+    "margin-top": "27px",
   },
   padContainer: {
-    padding: "0 10%"
-  }
+    padding: "0 10%",
+  },
 };
 
 const waterSampleParams = [
@@ -83,7 +83,7 @@ const waterSampleParams = [
   { name: "RO Plant", val: "roplant" },
   { name: "Distribution Pipeline Tap First", val: "tapfirst" },
   { name: "Distribution Pipeline Tap Middle", val: "tapmiddle" },
-  { name: "Distribution Pipeline Tap Last", val: "taplast" }
+  { name: "Distribution Pipeline Tap Last", val: "taplast" },
 ];
 
 const useStyles = makeStyles(styles);
@@ -95,7 +95,7 @@ const responseMap = {
   hud: "block",
   block: "village",
   village: "habitation",
-  habitation: "street"
+  habitation: "street",
 };
 
 export default function FillForm(props) {
@@ -115,27 +115,27 @@ export default function FillForm(props) {
   useEffect(() => {
     (async () => {
       if (stateProps.id) {
-        await Http.getResponse("districts", 33).then(res => {
+        await Http.getResponse("districts", 36).then((res) => {
           setDistricts(res);
         });
-        await Http.getResponse("hud", formValue.district).then(res => {
+        await Http.getResponse("hud", formValue.district).then((res) => {
           setHuds(res);
         });
-        await Http.getResponse("block", formValue.hud).then(res => {
+        await Http.getResponse("block", formValue.hud).then((res) => {
           setBlocks(res);
         });
-        await Http.getResponse("village", formValue.block).then(res => {
+        await Http.getResponse("village", formValue.block).then((res) => {
           setVillages(res);
         });
-        await Http.getResponse("habitation", formValue.village).then(res => {
+        await Http.getResponse("habitation", formValue.village).then((res) => {
           setHabitations(res);
         });
-        await Http.getResponse("street", formValue.habitation).then(res => {
+        await Http.getResponse("street", formValue.habitation).then((res) => {
           setLoaded(true);
           setStreets(res);
         });
       } else {
-        Http.getResponse("districts", 33).then(res => {
+        Http.getResponse("districts", 36).then((res) => {
           setDistricts(res);
         });
       }
@@ -189,6 +189,15 @@ export default function FillForm(props) {
   const { latitude, longitude } = usePosition(true);
   const webcamRef = React.useRef(null);
   const handleSubmit = async (op = "insert", id) => {
+    if (!district || !hud) {
+      const wait = (timeout = 2000) => {
+        return new Promise((resolve) => setTimeout(() => resolve, timeout));
+      };
+      setmessageInfo("District, Hud are required to save the entry");
+      setshowInfo(true);
+      await wait();
+      setshowInfo(false);
+    }
     const payload = {
       formType: "action",
       userId: localStorage.getItem("userId"),
@@ -207,19 +216,19 @@ export default function FillForm(props) {
         housesEngaged,
         housesCleared,
         containersDestroyed,
-        dateOfFogging
-      }
+        dateOfFogging,
+      },
     };
     setmessageInfo("Saving");
     setshowInfo(true);
     await Http.submitVectorFormData(payload, op, id).then(() => {
       setshowInfo(false);
       props.history.push({
-        pathname: "lineList"
+        pathname: "lineList",
       });
     });
   };
-  const handleDateChange = date => {
+  const handleDateChange = (date) => {
     setDateOfInspection(date);
   };
 
@@ -240,11 +249,11 @@ export default function FillForm(props) {
         "block",
         "village",
         "habitation",
-        "street"
+        "street",
       ].includes(fn)
     ) {
       console.log("!!!", fn, event);
-      Http.getResponse(responseMap[fn], event.target.value).then(res => {
+      Http.getResponse(responseMap[fn], event.target.value).then((res) => {
         // if (fn === "countries") {
         //   setCountry(targetVal);
         //   setStates(res);
@@ -473,7 +482,7 @@ export default function FillForm(props) {
                         "Bus stand",
                         "Worship area",
                         "Prison",
-                        "Locked house"
+                        "Locked house",
                       ].map((i, idx) => (
                         <MenuItem value={i} key={idx}>
                           {i}
@@ -501,7 +510,7 @@ export default function FillForm(props) {
                         "Institutions",
                         "Govt Building",
                         "Open Place",
-                        "Others"
+                        "Others",
                       ].map((i, idx) => (
                         <MenuItem value={i} key={idx}>
                           {i}
@@ -522,7 +531,7 @@ export default function FillForm(props) {
                       value={dateOfInspection}
                       onChange={handleDateChange}
                       KeyboardButtonProps={{
-                        "aria-label": "change date"
+                        "aria-label": "change date",
                       }}
                     />
                   </MuiPickersUtilsProvider>
@@ -564,7 +573,7 @@ export default function FillForm(props) {
                       value={dateOfWork}
                       onChange={setWaterParamState.bind(null, "DateOfWork")}
                       KeyboardButtonProps={{
-                        "aria-label": "change date"
+                        "aria-label": "change date",
                       }}
                     />
                   </MuiPickersUtilsProvider>
@@ -574,12 +583,12 @@ export default function FillForm(props) {
                     labelText="Number of DBC workers Engaged"
                     id="dbcworkers"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: workersEngaged,
-                      onChange: setWaterParamState.bind(null, "WorkersEngaged")
+                      onChange: setWaterParamState.bind(null, "WorkersEngaged"),
                     }}
                   />
                 </GridItem>
@@ -588,12 +597,12 @@ export default function FillForm(props) {
                     labelText="Number of other Workers"
                     id="otherworkers"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: otherWorkers,
-                      onChange: setWaterParamState.bind(null, "OtherWorkers")
+                      onChange: setWaterParamState.bind(null, "OtherWorkers"),
                     }}
                   />
                 </GridItem>
@@ -604,12 +613,12 @@ export default function FillForm(props) {
                     labelText="Number of Houses Engaged"
                     id="housesengaged"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: housesEngaged,
-                      onChange: setWaterParamState.bind(null, "HousesEngaged")
+                      onChange: setWaterParamState.bind(null, "HousesEngaged"),
                     }}
                   />
                 </GridItem>
@@ -618,12 +627,12 @@ export default function FillForm(props) {
                     labelText="Number of Houses Cleared"
                     id="housescleared"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
                       value: housesCleared,
-                      onChange: setWaterParamState.bind(null, "HousesCleared")
+                      onChange: setWaterParamState.bind(null, "HousesCleared"),
                     }}
                   />
                 </GridItem>
@@ -632,7 +641,7 @@ export default function FillForm(props) {
                     labelText="Number of Containers destroyed"
                     id="containersdestroyed"
                     formControlProps={{
-                      fullWidth: true
+                      fullWidth: true,
                     }}
                     inputProps={{
                       type: "number",
@@ -640,7 +649,7 @@ export default function FillForm(props) {
                       onChange: setWaterParamState.bind(
                         null,
                         "ContainersDestroyed"
-                      )
+                      ),
                     }}
                   />
                 </GridItem>
@@ -657,7 +666,7 @@ export default function FillForm(props) {
                       value={dateOfFogging}
                       onChange={setWaterParamState.bind(null, "DateOfFogging")}
                       KeyboardButtonProps={{
-                        "aria-label": "change date"
+                        "aria-label": "change date",
                       }}
                     />
                   </MuiPickersUtilsProvider>
@@ -669,13 +678,13 @@ export default function FillForm(props) {
 
         <CardFooter
           style={{
-            width: "100%"
+            width: "100%",
           }}
         >
           <Button
             color="primary"
             style={{
-              marginLeft: "50%"
+              marginLeft: "50%",
             }}
             onClick={handleSubmit.bind(
               null,

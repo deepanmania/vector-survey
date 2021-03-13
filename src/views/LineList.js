@@ -12,19 +12,24 @@ import CardHeader from "components/Card/CardHeader.js";
 // import CardAvatar from "components/Card/CardAvatar.js";
 import CardBody from "components/Card/CardBody.js";
 import Table from "components/Table/Table.js";
+import CardFooter from "components/Card/CardFooter.js";
 import moment from "moment";
 import FileSaver from "file-saver";
+import Store from "@material-ui/icons/Store";
 import { parse } from "json2csv";
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker
+  KeyboardDatePicker,
 } from "@material-ui/pickers";
+import CardIcon from "components/Card/CardIcon.js";
+
 import FormControl from "@material-ui/core/FormControl";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import Header from "views/Header";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
+import DateRange from "@material-ui/icons/DateRange";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import DateFnsUtils from "@date-io/date-fns";
 // import CardFooter from "components/Card/CardFooter.js";
@@ -32,6 +37,7 @@ import styles from "assets/jss/material-dashboard-react/views/dashboardStyle.js"
 import Icon from "@material-ui/core/Icon";
 
 import { Http } from "lib";
+import { black } from "material-ui/styles/colors";
 
 const keyMapper = {
   dateOfInspection: "Date of Inspection",
@@ -56,7 +62,7 @@ const keyMapper = {
   overheadtank: "Over Head Tank / HDPE Tanks",
   roplant: "RO Plant",
   tapfirst: "Distribution Pipeline Tap First",
-  tapmiddle: "Distribution Pipeline Tap Middle"
+  tapmiddle: "Distribution Pipeline Tap Middle",
 };
 
 const formStyles = {
@@ -65,7 +71,7 @@ const formStyles = {
     margin: "0",
     fontSize: "14px",
     marginTop: "0",
-    marginBottom: "0"
+    marginBottom: "0",
   },
   cardTitleWhite: {
     color: "#FFFFFF",
@@ -74,15 +80,15 @@ const formStyles = {
     fontWeight: "300",
     fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
     marginBottom: "3px",
-    textDecoration: "none"
+    textDecoration: "none",
   },
   formControl: {
     width: "100%",
-    "margin-top": "27px"
+    "margin-top": "27px",
   },
   padContainer: {
-    padding: "0 10%"
-  }
+    padding: "0 10%",
+  },
 };
 const useStyles = makeStyles(styles);
 const useFormStyles = makeStyles(formStyles);
@@ -108,7 +114,7 @@ export default function LineList(props) {
   const [village, setVillage] = React.useState(0);
 
   const [habitation, setHabitation] = React.useState(0);
-  const [draftColor, setDraftColor] = React.useState("danger")
+  const [draftColor, setDraftColor] = React.useState("danger");
   const [street, setStreet] = React.useState(0);
   const [data, setData] = React.useState("");
   const responseMap = {
@@ -118,21 +124,23 @@ export default function LineList(props) {
     hud: "block",
     block: "village",
     village: "habitation",
-    habitation: "street"
+    habitation: "street",
   };
 
-  const handleClick = id => {
+  const handleClick = (id) => {
     console.log(id);
-    Http.getEntry(id, localStorage.getItem("appName"), recordType).then(res => {
-      console.log("***", res);
-      props.history.push({
-        pathname:
-          localStorage.getItem("appName") === "vector"
-            ? "/fillform"
-            : "/waterform",
-        state: res
-      });
-    });
+    Http.getEntry(id, localStorage.getItem("appName"), recordType).then(
+      (res) => {
+        console.log("***", res);
+        props.history.push({
+          pathname:
+            localStorage.getItem("appName") === "vector"
+              ? "/fillform"
+              : "/waterform",
+          state: res,
+        });
+      }
+    );
   };
 
   const handleSubmit = () => {
@@ -145,12 +153,12 @@ export default function LineList(props) {
         village,
         // habitation,
         placeType,
-        dateOfInspection
-      }
+        dateOfInspection,
+      },
     };
     console.log(localStorage.getItem("appName"));
-    Http.applyFilter(payload, localStorage.getItem("appName")).then(resp => {
-      resp = resp.map(i => {
+    Http.applyFilter(payload, localStorage.getItem("appName")).then((resp) => {
+      resp = resp.map((i) => {
         i.dateOfInspection = moment(
           i.entry.dateOfInspection,
           moment.ISO_8601
@@ -162,20 +170,20 @@ export default function LineList(props) {
   };
 
   const downloadCSV = () => {
-    const csv = parse(data.map(i => i.entry));
+    const csv = parse(data.map((i) => i.entry));
     const blob = new Blob([csv], { type: "text/plain;charset=utf-8" });
     FileSaver.saveAs(blob, "linelist.csv");
   };
 
-  const [showDraft, setShowDraft] = React.useState(false)
+  const [showDraft, setShowDraft] = React.useState(false);
   const showDrafts = () => {
     if (!showDraft) {
-      setDraftColor("info")
+      setDraftColor("info");
     } else {
-      setDraftColor("danger")
+      setDraftColor("danger");
     }
-    setShowDraft(!showDraft)
-  }
+    setShowDraft(!showDraft);
+  };
 
   const handleChange = (fn, event) => {
     console.log(fn, event);
@@ -189,11 +197,11 @@ export default function LineList(props) {
         "block",
         "village",
         "habitation",
-        "street"
+        "street",
       ].includes(fn)
     ) {
       console.log("!!!", fn, event);
-      Http.getResponse(responseMap[fn], event.target.value).then(res => {
+      Http.getResponse(responseMap[fn], event.target.value).then((res) => {
         // if (fn === "countries") {
         //   setCountry(targetVal);
         //   setStates(res);
@@ -236,21 +244,22 @@ export default function LineList(props) {
       }
     }
   };
-  const handleDateChange = date => {
+  const handleDateChange = (date) => {
     setDateOfInspection(date);
   };
   useEffect(() => {
     // setting tamilnadu as default and requesting districts
-    Http.getResponse("districts", 33).then(res => {
+    Http.getResponse("districts", 36).then((res) => {
       setDistricts(res);
-      Http.getLineListData(localStorage.getItem("appName")).then(resp => {
-        resp = resp.map(i => {
+      Http.getLineListData(localStorage.getItem("appName")).then((resp) => {
+        resp = resp.map((i) => {
           i.entry.dateOfInspection = moment(
             i.entry.dateOfInspection,
             moment.ISO_8601
           ).format("DD/MM/YYYY");
           return i;
         });
+        console.log(resp);
         setData(resp);
       });
     });
@@ -261,6 +270,84 @@ export default function LineList(props) {
       <MuiThemeProvider>
         <Header title="Line List" />
       </MuiThemeProvider>
+      {localStorage.getItem("appName") === "water-lab" && (
+        <GridContainer>
+          <GridItem xs={12} sm={6} md={4}>
+            <Card>
+              <CardHeader color="warning" stats icon>
+                <CardIcon color="warning">
+                  <Icon>content_copy</Icon>
+                </CardIcon>
+                <div style={{ color: "rgb(125, 128, 130)" }}>
+                  <h3 className={classes.cardTitle}>
+                    {
+                      data.filter(
+                        (i) => Object.keys(i.labentry || {}) === 0 && !i.draft
+                      ).length
+                    }{" "}
+                    <small>Entries</small>
+                  </h3>
+                </div>
+              </CardHeader>
+              <CardFooter stats>
+                <div className={classes.stats}>
+                  <DateRange />
+                  Incomplete Entries
+                </div>
+              </CardFooter>
+            </Card>
+          </GridItem>
+          <GridItem xs={12} sm={6} md={4}>
+            <Card>
+              <CardHeader color="warning" stats icon>
+                <CardIcon color="warning">
+                  <Icon>content_copy</Icon>
+                </CardIcon>
+                {localStorage.getItem("appName") === "water-lab" && (
+                  <div style={{ color: "rgb(125, 128, 130)" }}>
+                    <h3 className={classes.cardTitle}>
+                      {data.filter((i) => i.draft).length}{" "}
+                      <small>Entries</small>
+                    </h3>
+                  </div>
+                )}
+              </CardHeader>
+              <CardFooter stats>
+                <div className={classes.stats}>
+                  <DateRange />
+                  Draft Entries
+                </div>
+              </CardFooter>
+            </Card>
+          </GridItem>
+          <GridItem xs={12} sm={6} md={4}>
+            <Card>
+              <CardHeader color="success" stats icon>
+                <CardIcon color="success">
+                  <Store />
+                </CardIcon>
+                {localStorage.getItem("appName") === "water-lab" && (
+                  <div style={{ color: "rgb(125, 128, 130)" }}>
+                    <h3 className={classes.cardTitle}>
+                      {
+                        data.filter((i) => Object.keys(i.labentry || {}).length)
+                          .length
+                      }
+                      <small>Entries</small>
+                    </h3>
+                  </div>
+                )}
+              </CardHeader>
+              <CardFooter stats>
+                <div className={classes.stats}>
+                  <DateRange />
+                  Total Completed Entries
+                </div>
+              </CardFooter>
+            </Card>
+          </GridItem>
+        </GridContainer>
+      )}
       <GridContainer container={true}>
         <GridItem xs={12} sm={12} md={12} className={classes.padContainer}>
           <Card>
@@ -434,7 +521,7 @@ export default function LineList(props) {
                             "Institutions",
                             "Govt Building",
                             "Open Place",
-                            "Others"
+                            "Others",
                           ]
                         : [
                             "Corporation",
@@ -444,7 +531,7 @@ export default function LineList(props) {
                             "Government Homes",
                             "Railway Stations",
                             "Prisons",
-                            "Government Institutions"
+                            "Government Institutions",
                           ]
                       ).map((i, idx) => (
                         <MenuItem value={i} key={idx}>
@@ -461,12 +548,12 @@ export default function LineList(props) {
                       className={classes.formControl}
                       margin="normal"
                       id="date-picker-dialog"
-                      label="Date of Inspection"
+                      label="Date of Sample Taken"
                       format="MM/dd/yyyy"
                       value={dateOfInspection}
                       onChange={handleDateChange}
                       KeyboardButtonProps={{
-                        "aria-label": "change date"
+                        "aria-label": "change date",
                       }}
                     />
                   </MuiPickersUtilsProvider>
@@ -500,7 +587,7 @@ export default function LineList(props) {
         color="primary"
         onClick={handleSubmit}
         style={{
-          marginLeft: "50%"
+          marginLeft: "50%",
         }}
       >
         Apply
@@ -511,31 +598,37 @@ export default function LineList(props) {
             <CardHeader color="warning">
               <div
                 style={{
-                  float: "left"
+                  float: "left",
                 }}
               >
                 <h4 className={listClasses.cardTitleWhite}>Line List</h4>
               </div>
-               
+
               <div
-                
                 style={{
-                  float: "right"
+                  float: "right",
                 }}
               >
-                 {localStorage.getItem("appName") === "water-lab" && (
-                  <Button color={draftColor} style={{padding: "5px"}} onClick={showDrafts}>Show Drafts</Button>
+                {localStorage.getItem("appName") === "water-lab" && (
+                  <Button
+                    color={draftColor}
+                    style={{ padding: "5px" }}
+                    onClick={showDrafts}
+                  >
+                    Show Drafts
+                  </Button>
                 )}
                 &nbsp;
                 <span onClick={downloadCSV}>
-                Export Result &nbsp;
-                <Icon
-                  style={{
-                    marginBottom: "-5%"
-                  }}
-                >
-                  cloud_download
-                </Icon></span>
+                  Export Result &nbsp;
+                  <Icon
+                    style={{
+                      marginBottom: "-5%",
+                    }}
+                  >
+                    cloud_download
+                  </Icon>
+                </span>
               </div>
             </CardHeader>
             <CardBody>
@@ -545,23 +638,30 @@ export default function LineList(props) {
                   tableHead={[
                     "S.No",
                     ...Object.keys(data[0].entry),
-                    ...[""]
-                  ].map(i => keyMapper[i] || i)}
-                  tableData={data.filter(i => i.draft === (showDraft ? true : null)).map((i, idx) => {
-                    const id = i.id;
-                    return [
-                      idx + 1,
-                      ...Object.values(i.entry).map(i => {
-                        if (typeof i === "object") {
-                          return i.name;
-                        }
-                        return i;
-                      }),
-                      <div key={idx} onClick={handleClick.bind(null, id)}>
-                        <Icon key={idx}>create</Icon>
-                      </div>
-                    ];
-                  })}
+                    ...[""],
+                  ].map((i) => keyMapper[i] || i)}
+                  tableData={data
+                    .filter((i) => {
+                      if (showDraft) {
+                        return i.draft === true;
+                      }
+                      return !i.draft;
+                    })
+                    .map((i, idx) => {
+                      const id = i.id;
+                      return [
+                        idx + 1,
+                        ...Object.values(i.entry).map((i) => {
+                          if (typeof i === "object") {
+                            return i.name;
+                          }
+                          return i;
+                        }),
+                        <div key={idx} onClick={handleClick.bind(null, id)}>
+                          <Icon key={idx}>create</Icon>
+                        </div>,
+                      ];
+                    })}
                 />
               )}
             </CardBody>

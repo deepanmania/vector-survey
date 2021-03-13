@@ -3,11 +3,11 @@
 const rp = require("request-promise-native").defaults({
   headers: {
     Accept: "application/json",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   },
   jar: true,
   json: true,
-  resolveWithFullResponse: false
+  resolveWithFullResponse: false,
 });
 
 const getPayload = (key, id) => {
@@ -30,7 +30,7 @@ const getPayload = (key, id) => {
                             longitude
                             }
                         }
-                    }`
+                    }`,
     };
   }
   if (key === "states") {
@@ -42,7 +42,7 @@ const getPayload = (key, id) => {
                 stateName
               }
             }
-          }`
+          }`,
     };
   }
   if (key === "districts") {
@@ -54,7 +54,7 @@ const getPayload = (key, id) => {
               districtName
             }
           }
-      }`
+      }`,
     };
   }
   if (key === "hud") {
@@ -63,10 +63,10 @@ const getPayload = (key, id) => {
         allHudMasters(condition: { districtId: ${id} }){
           nodes{
           hudId
-          hudName
+          hudName 
           }
         }
-        }`
+        }`,
     };
   }
   if (key === "block") {
@@ -78,7 +78,7 @@ const getPayload = (key, id) => {
             blockName
           }
           }
-      }`
+      }`,
     };
   }
   if (key === "village") {
@@ -106,7 +106,7 @@ const getPayload = (key, id) => {
           }
           __typename
         }
-      }`
+      }`,
     };
   }
 
@@ -137,7 +137,7 @@ const getPayload = (key, id) => {
           }
           __typename
         }
-      }`
+      }`,
     };
   }
 
@@ -165,7 +165,7 @@ const getPayload = (key, id) => {
           }
           __typename
         }
-      }`
+      }`,
     };
   }
 };
@@ -177,26 +177,27 @@ export function getResponse(key = "countries", id) {
     url: `${global.apiUrl}/graphql`,
     method: "POST",
     form: payload,
-    json: true
+    json: true,
   };
   console.log(options);
-  return rp(options).then(res => {
+  return rp(options).then((res) => {
+    console.log(res);
     if (key === "countries") {
-      return ((res.data.allCountriesMasters || {}).nodes || []).map(i => ({
+      return ((res.data.allCountriesMasters || {}).nodes || []).map((i) => ({
         countryId: i.countryId,
-        countryName: i.countryName
+        countryName: i.countryName,
       }));
     }
     if (key === "states") {
-      return ((res.data.allStatesMasters || {}).nodes || []).map(i => ({
+      return ((res.data.allStatesMasters || {}).nodes || []).map((i) => ({
         stateId: i.stateId,
-        stateName: i.stateName
+        stateName: i.stateName,
       }));
     }
     if (key === "districts") {
-      return ((res.data.allDistrictsMasters || {}).nodes || []).map(i => ({
+      return ((res.data.allDistrictsMasters || {}).nodes || []).map((i) => ({
         districtId: i.districtId,
-        districtName: i.districtName
+        districtName: i.districtName,
       }));
     }
     if (key === "hud") {
@@ -227,7 +228,7 @@ export function getLineListData(path = "vector") {
     uri: `${global.apiBaseUrl}/${
       path !== "vector" ? "water" : "vector"
     }/lineList`,
-    json: true
+    json: true,
   });
 }
 
@@ -240,7 +241,7 @@ export function applyFilter(params, path = "vector") {
     method: "POST",
     body: params,
     json: true,
-    jar: true
+    jar: true,
   });
 }
 
@@ -254,7 +255,7 @@ export function getDashBoardData(path) {
     uri: `${global.apiBaseUrl}/${
       path !== "vector" ? "water" : "vector"
     }/getDashBoardData`,
-    json: true
+    json: true,
   });
 }
 
@@ -272,7 +273,7 @@ export function getEntry(id, path = "vector", recordType) {
     }?id=${id}&recordType=${recordType}&userId=${localStorage.getItem(
       "userId"
     )}`,
-    json: true
+    json: true,
   });
 }
 
@@ -282,7 +283,7 @@ export function submitVectorFormData(inputObject, op, id) {
     json: true,
     url: `${global.apiBaseUrl}/vector?op=${op}&id=${id}`,
     method: "POST",
-    body: inputObject
+    body: inputObject,
   };
   console.log(options);
   return rp(options);
@@ -294,7 +295,7 @@ export function submitWaterFormData(inputObject, op, id) {
     json: true,
     url: `${global.apiBaseUrl}/water?op=${op}&id=${id}`,
     method: "POST",
-    body: inputObject
+    body: inputObject,
   };
   console.log(options);
   return rp(options);
@@ -306,7 +307,7 @@ export function submitWaterLabFormData(inputObject, id, op) {
     json: true,
     url: `${global.apiBaseUrl}/water?id=${id}&lab=true&op=${op}`,
     method: "POST",
-    body: inputObject
+    body: inputObject,
   };
   console.log(options);
   return rp(options);
@@ -316,7 +317,7 @@ export function submitLogin(payload) {
   const options = {
     method: "POST",
     url: `${global.apiBaseUrl}/login`,
-    body: payload
+    body: payload,
   };
   console.log(options);
   return rp(options);
