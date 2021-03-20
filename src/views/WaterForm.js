@@ -394,18 +394,19 @@ export default function FillForm(props) {
       setshowInfo(false);
       setinfocolor("info");
     }
+    debugger;
     if (
-      !infiltrationgallery.name &&
-      !infiltrationwell.name &&
-      !openwell.name &&
-      !borewell.name &&
-      !collectionsump.name &&
-      !pumpingstation.name &&
-      !overheadtank.name &&
-      !roplant.name &&
-      !tapfirst.name &&
-      !tapmiddle.name &&
-      !taplast.name
+      !infiltrationgallery &&
+      !infiltrationwell &&
+      !openwell &&
+      !borewell &&
+      !collectionsump &&
+      !pumpingstation &&
+      !overheadtank &&
+      !roplant &&
+      !tapfirst &&
+      !tapmiddle &&
+      !taplast
     ) {
       setmessageInfo(
         "Please make atleast one entry in Status of Water Chlorination to save the entry."
